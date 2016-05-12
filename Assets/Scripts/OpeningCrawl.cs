@@ -13,6 +13,12 @@ public class OpeningCrawl : MonoBehaviour {
 		this.targetRotationAngle = Camera.main.GetComponent<Transform>().eulerAngles;
 		targetRotationAngle.x = targetRotationAngle.x + 90;
 		this.skipOpeningCrawl = false;
+
+		if (GameKeeper.isDebug)
+		{
+			this.skipOpeningCrawl = true;
+		}
+
 		this.revealBoardClipStarted = false;
 	}
 	

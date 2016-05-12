@@ -22,7 +22,7 @@ public class MoveIcon : MonoBehaviour {
 		this.TryPlayDeathAnimation();
 
 		GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().chessBoard.MoveTo(this.movingPiece, this.movePosition);
-		this.movingPiece.gameObject.GetComponent<PieceInputHandler>().isInAnimationState = true;
+		this.movingPiece.gameObject.GetComponent<PieceBehaviour>().isInAnimationState = true;
 
 		GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().ClearTiles();
 		this.movingPiece.PostMoveActions();

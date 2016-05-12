@@ -60,9 +60,17 @@ public class Animations {
 			GameObject chessBoard = GameObject.Find(Constants.PieceNames.ChessBoard);
 			GameObject revealBoardAudioSource = GameObject.Find(Constants.AuxiliaryAudioObject);
 
-			revealBoardAudioSource.GetComponent<AudioSource>().Play();
 			chessBoard.GetComponent<GameKeeper>().SpawnPieces();
-			chessBoard.GetComponent<GameKeeper>().StartCoroutine(BeginGameLoop(revealBoardAudioSource.GetComponent<AudioSource>().clip.length));
+
+			if (!GameKeeper.isDebug)
+			{
+				revealBoardAudioSource.GetComponent<AudioSource>().Play();
+				chessBoard.GetComponent<GameKeeper>().StartCoroutine(BeginGameLoop(revealBoardAudioSource.GetComponent<AudioSource>().clip.length));
+			}
+			else
+			{
+				chessBoard.GetComponent<GameKeeper>().StartCoroutine(BeginGameLoop(0));
+			}
 		}
 	}
 
@@ -143,7 +151,7 @@ public class Animations {
 		if (!stillInMotion)
 		{
 			// Ready to roll
-			movingPiece.gameObject.GetComponent<PieceInputHandler>().isInAnimationState = false;
+			movingPiece.gameObject.GetComponent<PieceBehaviour>().isInAnimationState = false;
 			TriggerNextStartAnimation(movingPiece);
 			if (gameKeeper.hasGameStarted())
 			{
@@ -191,6 +199,14 @@ public class Animations {
 			piece.gameObject.GetComponent<Transform>().position = new Vector3(currentPosition.x + HardcodedOffset(piece).x,
 																				currentPosition.y + HardcodedOffset(piece).y,
 																				currentPosition.z + HardcodedOffset(piece).z);
+		}
+		else if(GameKeeper.isDebug)
+		{
+			GameKeeper gameKeeper = GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>();
+			float finalXPosition = gameKeeper.GetTransformFromPosition(piece.GetCurrentPosition()).x + HardcodedOffset(piece).x;
+			float finalYPosition = float.Parse(piece.gameObject.GetComponent<MeshRenderer>().bounds.extents.y.ToString("0.00")) + HardcodedOffset(piece).y;
+			float finalZPosition = gameKeeper.GetTransformFromPosition(piece.GetCurrentPosition()).z + HardcodedOffset(piece).z;
+			piece.gameObject.GetComponent<Transform>().position = new Vector3(finalXPosition, finalYPosition, finalZPosition);
 		}
 	}
 
@@ -270,28 +286,34 @@ public class Animations {
 	public static Vector3 InitializeStartAnimationSettings(AbstractPiece piece)
 	{
 		// Initially, aircraft will be off the board and at a higher elevation than that of the board
-		if (isSpaceship(piece))
+		if (!GameKeeper.isDebug)
 		{
-			Vector3 initialTransform = piece.gameObject.GetComponent<Transform>().position;
-			int multiplier;
-			if (piece.side == Side.Black)
+			if (isSpaceship(piece))
 			{
-				multiplier = 1;
+				Vector3 initialTransform = piece.gameObject.GetComponent<Transform>().position;
+				int multiplier;
+				if (piece.side == Side.Black)
+				{
+					multiplier = 1;
+				}
+				else
+				{
+					multiplier = -1;
+				}
+				Vector3 finalTransform = new Vector3(initialTransform.x + multiplier * 2, initialTransform.y, initialTransform.z);
+				return finalTransform;
 			}
 			else
 			{
-				multiplier = -1;
+				// Assuming each King/Queen mesh has only one shader since they don't need glass
+				Material meshMaterial = piece.gameObject.GetComponent<MeshRenderer>().material;
+				meshMaterial.SetColor("_Color", new Color(meshMaterial.GetColor("_Color").r, meshMaterial.GetColor("_Color").g, meshMaterial.GetColor("_Color").b, 0.0f));
+				return piece.gameObject.GetComponent<Transform>().position;
 			}
-			Vector3 finalTransform = new Vector3(initialTransform.x + multiplier * 2, initialTransform.y, initialTransform.z);
-			return finalTransform;
 		}
 		else
 		{
-			// Assuming each King/Queen mesh has only one shader since they don't need glass
-			Material meshMaterial = piece.gameObject.GetComponent<MeshRenderer>().material;
-			meshMaterial.SetColor("_Color", new Color(meshMaterial.GetColor("_Color").r, meshMaterial.GetColor("_Color").g, meshMaterial.GetColor("_Color").b, 0.0f));
 			return piece.gameObject.GetComponent<Transform>().position;
 		}
 	}
-
 }

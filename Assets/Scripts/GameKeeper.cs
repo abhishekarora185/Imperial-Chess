@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 public class GameKeeper : MonoBehaviour {
 
+	public static bool isDebug = false;
+
 	public GameObject[] prefabs;
 
 	public GameObject whiteMoveIcon;
@@ -35,8 +37,6 @@ public class GameKeeper : MonoBehaviour {
 
 		this.chessBoard = new Chessboard();
 		this.gameStarted = false;
-
-		this.piecesToSpawn = 32;
 		this.piecesSpawned = 0;
 
 		Animations.PlayOpeningCrawl();
@@ -105,89 +105,27 @@ public class GameKeeper : MonoBehaviour {
 
 	public void SpawnPieces()
 	{
-		Dictionary<Position, GameObject> piecesToSpawn = new Dictionary<Position, GameObject>();
-
-		// Black side is towards the +ve X-axis, White towards the -ve
-
-		int pawnColumn;
-		// Black Pawns
-		int pawnRow = 7;
-		for (pawnColumn = Position.min; pawnColumn <= Position.max; pawnColumn++)
-		{
-			piecesToSpawn[new Position(pawnColumn, pawnRow)] = prefabs[Constants.PieceCodes.BlackPawn];
-		}
-		// White Pawns
-		pawnRow = 2;
-		for (pawnColumn = Position.min; pawnColumn <= Position.max; pawnColumn++)
-		{
-			piecesToSpawn[new Position(pawnColumn, pawnRow)] = prefabs[Constants.PieceCodes.WhitePawn];
-		}
-
-		int[] rookColumns = { 1, 8 };
-		int[] bishopColumns = { 3, 6 };
-		int[] knightColumns = { 2, 7 };
-
-		// Black Rooks
-		int rookRow = 8;
-		foreach (int rookColumn in rookColumns)
-		{
-			piecesToSpawn[new Position(rookColumn, rookRow)] = prefabs[Constants.PieceCodes.BlackRook];
-		}
-
-		// White Rooks
-		rookRow = 1;
-		foreach (int rookColumn in rookColumns)
-		{
-			piecesToSpawn[new Position(rookColumn, rookRow)] = prefabs[Constants.PieceCodes.WhiteRook];
-		}
-
-		// Black Bishops
-		int bishopRow = 8;
-		foreach (int bishopColumn in bishopColumns)
-		{
-			piecesToSpawn[new Position(bishopColumn, bishopRow)] = prefabs[Constants.PieceCodes.BlackBishop];
-		}
-
-		// White Bishops
-		bishopRow = 1;
-		foreach (int bishopColumn in bishopColumns)
-		{
-			piecesToSpawn[new Position(bishopColumn, bishopRow)] = prefabs[Constants.PieceCodes.WhiteBishop];
-		}
-
-		// Black Knights
-		int knightRow = 8;
-		foreach (int knightColumn in knightColumns)
-		{
-			piecesToSpawn[new Position(knightColumn, knightRow)] = prefabs[Constants.PieceCodes.BlackKnight];
-		}
-
-		// White Knights
-		knightRow = 1;
-		foreach (int knightColumn in knightColumns)
-		{
-			piecesToSpawn[new Position(knightColumn, knightRow)] = prefabs[Constants.PieceCodes.WhiteKnight];
-		}
-
-		// Black and White Queens
-		int queenColumn = 5, queenRow = 8;
-		piecesToSpawn[new Position(queenColumn, queenRow)] = prefabs[Constants.PieceCodes.BlackQueen];
+		// For debugging purposes, change the value of the following dictionary
+		Dictionary<Position, int> spawnArrangement;
 		
-		queenRow = 1;
-		piecesToSpawn[new Position(queenColumn, queenRow)] = prefabs[Constants.PieceCodes.WhiteQueen];
-
-		// Black and White Kings
-		int kingColumn = 4, kingRow = 8;
-		piecesToSpawn[new Position(kingColumn, kingRow)] = prefabs[Constants.PieceCodes.BlackKing];
-		
-		kingRow = 1;
-		piecesToSpawn[new Position(kingColumn, kingRow)] = prefabs[Constants.PieceCodes.WhiteKing];
-
-		foreach (Position spawnPosition in piecesToSpawn.Keys)
+		if (!isDebug)
 		{
-			GameObject spawnedPiece = (GameObject)Instantiate(piecesToSpawn[spawnPosition],
+			spawnArrangement = this.GetDefaultSpawnArrangement();
+		}
+		else
+		{
+			spawnArrangement = this.GetDebugSpawnArrangement();
+		}
+
+		this.piecesToSpawn = spawnArrangement.Count;
+
+		foreach (Position spawnPosition in spawnArrangement.Keys)
+		{
+			GameObject prefab = prefabs[spawnArrangement[spawnPosition]];
+
+			GameObject spawnedPiece = (GameObject)Instantiate(prefab,
 				this.squares[spawnPosition],
-				piecesToSpawn[spawnPosition].GetComponent<Transform>().rotation);
+				prefab.GetComponent<Transform>().rotation);
 			spawnedPiece.GetComponent<AbstractPiece>().SetCurrentPosition(spawnPosition);
 
 			this.chessBoard.AddPiece(spawnedPiece.GetComponent<AbstractPiece>());
@@ -248,6 +186,64 @@ public class GameKeeper : MonoBehaviour {
 		}
 	}
 
+	private Dictionary<Position, int> GetDefaultSpawnArrangement()
+	{
+		Dictionary<Position, int> arrangement = new Dictionary<Position, int>();
+		int column;
+
+		for (column = Position.min; column <= Position.max; column++)
+		{
+			// Black Pawns
+			arrangement[new Position(column, 7)] = Constants.PieceCodes.BlackPawn;
+
+			// White Pawns
+			arrangement[new Position(column, 2)] = Constants.PieceCodes.WhitePawn;
+		}
+
+		// Black Rooks
+		arrangement[new Position(1, 8)] = Constants.PieceCodes.BlackRook;
+		arrangement[new Position(8, 8)] = Constants.PieceCodes.BlackRook;
+
+		//White Rooks
+		arrangement[new Position(1, 1)] = Constants.PieceCodes.WhiteRook;
+		arrangement[new Position(8, 1)] = Constants.PieceCodes.WhiteRook;
+
+		// Black Knights
+		arrangement[new Position(2, 8)] = Constants.PieceCodes.BlackKnight;
+		arrangement[new Position(7, 8)] = Constants.PieceCodes.BlackKnight;
+
+		//White Knights
+		arrangement[new Position(2, 1)] = Constants.PieceCodes.WhiteKnight;
+		arrangement[new Position(7, 1)] = Constants.PieceCodes.WhiteKnight;
+
+		// Black Bishops
+		arrangement[new Position(3, 8)] = Constants.PieceCodes.BlackBishop;
+		arrangement[new Position(6, 8)] = Constants.PieceCodes.BlackBishop;
+
+		//White Bishops
+		arrangement[new Position(3, 1)] = Constants.PieceCodes.WhiteBishop;
+		arrangement[new Position(6, 1)] = Constants.PieceCodes.WhiteBishop;
+
+		// Kings & Queens
+		arrangement[new Position(4, 8)] = Constants.PieceCodes.BlackKing;
+		arrangement[new Position(5, 8)] = Constants.PieceCodes.BlackQueen;
+		arrangement[new Position(4, 1)] = Constants.PieceCodes.WhiteKing;
+		arrangement[new Position(5, 1)] = Constants.PieceCodes.WhiteQueen;
+
+		return arrangement;
+	}
+
+	private Dictionary<Position, int> GetDebugSpawnArrangement()
+	{
+		// Just so you can start with the board in a given state instead of having to play your way to that state
+		Dictionary<Position, int> arrangement = new Dictionary<Position, int>();
+
+		arrangement[new Position(1, 2)] = Constants.PieceCodes.WhiteKnight;
+		arrangement[new Position(3, 4)] = Constants.PieceCodes.BlackKnight;
+
+		return arrangement;
+	}
+
 	// Set Event Handlers for the game start animations
 	private void SetEventHandlers()
 	{
@@ -257,7 +253,7 @@ public class GameKeeper : MonoBehaviour {
 			{
 				if (piece.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.Bishop)
 				{
-					piece.GetComponent<PieceInputHandler>().isInAnimationState = true;
+					piece.GetComponent<PieceBehaviour>().isInAnimationState = true;
 				}
 			}
 
@@ -270,7 +266,7 @@ public class GameKeeper : MonoBehaviour {
 			{
 				if (piece.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.Knight)
 				{
-					piece.GetComponent<PieceInputHandler>().isInAnimationState = true;
+					piece.GetComponent<PieceBehaviour>().isInAnimationState = true;
 				}
 			}
 
@@ -283,7 +279,7 @@ public class GameKeeper : MonoBehaviour {
 			{
 				if (piece.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.Rook)
 				{
-					piece.GetComponent<PieceInputHandler>().isInAnimationState = true;
+					piece.GetComponent<PieceBehaviour>().isInAnimationState = true;
 				}
 			}
 
@@ -297,7 +293,7 @@ public class GameKeeper : MonoBehaviour {
 				if (piece.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.Queen ||
 					piece.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.King)
 				{
-					piece.GetComponent<PieceInputHandler>().isInAnimationState = true; 
+					piece.GetComponent<PieceBehaviour>().isInAnimationState = true; 
 				}
 			}
 
@@ -347,20 +343,20 @@ public class GameKeeper : MonoBehaviour {
 			TrimName(spawnedObject.GetComponent<AbstractPiece>());
 			spawnedObject.GetComponent<AbstractPiece>().SetChessboard(this.chessBoard);
 
-			if (!hasGameStarted())
+			if (!isDebug && !hasGameStarted())
 			{
 				spawnedObject.transform.position = Animations.InitializeStartAnimationSettings(spawnedObject.GetComponent<AbstractPiece>());
 			}
 
-			if (spawnedObject.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.Queen || spawnedObject.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.King)
+			if (spawnedObject.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.Queen || spawnedObject.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.King || isDebug)
 			{
 				Animations.CorrectVerticalOffsets(spawnedObject.GetComponent<AbstractPiece>());
 			}
 
-			if (spawnedObject.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.Pawn && !this.hasGameStarted())
+			if (isDebug || (spawnedObject.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.Pawn && !this.hasGameStarted()))
 			{
 				// Pawns should start moving immediately
-				spawnedObject.GetComponent<PieceInputHandler>().isInAnimationState = true;
+				spawnedObject.GetComponent<PieceBehaviour>().isInAnimationState = true;
 			}
 		}
 	}
@@ -376,7 +372,7 @@ public class GameKeeper : MonoBehaviour {
 
 		Animations.CorrectVerticalOffsets(spawnedObject.GetComponent<AbstractPiece>());
 
-		spawnedObject.GetComponent<PieceInputHandler>().isInAnimationState = true;
+		spawnedObject.GetComponent<PieceBehaviour>().isInAnimationState = true;
 	}
 
 }
