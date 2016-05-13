@@ -238,8 +238,46 @@ public class GameKeeper : MonoBehaviour {
 		// Just so you can start with the board in a given state instead of having to play your way to that state
 		Dictionary<Position, int> arrangement = new Dictionary<Position, int>();
 
-		arrangement[new Position(1, 2)] = Constants.PieceCodes.WhiteKnight;
-		arrangement[new Position(3, 4)] = Constants.PieceCodes.BlackKnight;
+		int column;
+
+		for (column = Position.min + 2; column <= Position.max - 2; column++)
+		{
+			// Black Pawns
+			arrangement[new Position(column, 6)] = Constants.PieceCodes.BlackPawn;
+
+			// White Pawns
+			arrangement[new Position(column, 3)] = Constants.PieceCodes.WhitePawn;
+		}
+
+		// Black Rooks
+		arrangement[new Position(1, 8)] = Constants.PieceCodes.BlackRook;
+		arrangement[new Position(8, 8)] = Constants.PieceCodes.BlackRook;
+
+		//White Rooks
+		arrangement[new Position(1, 1)] = Constants.PieceCodes.WhiteRook;
+		arrangement[new Position(8, 1)] = Constants.PieceCodes.WhiteRook;
+
+		// Black Knights
+		arrangement[new Position(2, 8)] = Constants.PieceCodes.BlackKnight;
+		arrangement[new Position(7, 8)] = Constants.PieceCodes.BlackKnight;
+
+		//White Knights
+		arrangement[new Position(2, 1)] = Constants.PieceCodes.WhiteKnight;
+		arrangement[new Position(7, 1)] = Constants.PieceCodes.WhiteKnight;
+
+		// Black Bishops
+		arrangement[new Position(3, 8)] = Constants.PieceCodes.BlackBishop;
+		arrangement[new Position(6, 8)] = Constants.PieceCodes.BlackBishop;
+
+		//White Bishops
+		arrangement[new Position(3, 1)] = Constants.PieceCodes.WhiteBishop;
+		arrangement[new Position(6, 1)] = Constants.PieceCodes.WhiteBishop;
+
+		// Kings & Queens
+		arrangement[new Position(4, 8)] = Constants.PieceCodes.BlackKing;
+		arrangement[new Position(5, 8)] = Constants.PieceCodes.BlackQueen;
+		arrangement[new Position(4, 1)] = Constants.PieceCodes.WhiteKing;
+		arrangement[new Position(5, 1)] = Constants.PieceCodes.WhiteQueen;
 
 		return arrangement;
 	}
@@ -348,7 +386,7 @@ public class GameKeeper : MonoBehaviour {
 				spawnedObject.transform.position = Animations.InitializeStartAnimationSettings(spawnedObject.GetComponent<AbstractPiece>());
 			}
 
-			if (spawnedObject.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.Queen || spawnedObject.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.King || isDebug)
+			if (spawnedObject.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.Queen || spawnedObject.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.King)
 			{
 				Animations.CorrectVerticalOffsets(spawnedObject.GetComponent<AbstractPiece>());
 			}
@@ -357,6 +395,14 @@ public class GameKeeper : MonoBehaviour {
 			{
 				// Pawns should start moving immediately
 				spawnedObject.GetComponent<PieceBehaviour>().isInAnimationState = true;
+			}
+
+			if (isDebug)
+			{
+				float finalXPosition = GetTransformFromPosition(spawnedObject.GetComponent<AbstractPiece>().GetCurrentPosition()).x + Animations.HardcodedOffset(spawnedObject.GetComponent<AbstractPiece>()).x;
+				float finalYPosition = float.Parse(spawnedObject.GetComponent<MeshRenderer>().bounds.extents.y.ToString("0.00")) + Animations.HardcodedOffset(spawnedObject.GetComponent<AbstractPiece>()).y;
+				float finalZPosition = GetTransformFromPosition(spawnedObject.GetComponent<AbstractPiece>().GetCurrentPosition()).z + Animations.HardcodedOffset(spawnedObject.GetComponent<AbstractPiece>()).z;
+				spawnedObject.GetComponent<AbstractPiece>().gameObject.GetComponent<Transform>().position = new Vector3(finalXPosition, finalYPosition, finalZPosition);
 			}
 		}
 	}

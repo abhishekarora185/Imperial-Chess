@@ -4,6 +4,11 @@ using System.Collections.Generic;
 
 public class Animations {
 
+	public static Material opaqueBlackMaterial;
+	public static Material opaqueWhiteMaterial;
+	public static Material fadeBlackMaterial;
+	public static Material fadeWhiteMaterial;
+
 	public static void PlayOpeningCrawl()
 	{
 		GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().StartCoroutine(ALongTimeAgo());
@@ -146,6 +151,18 @@ public class Animations {
 			{
 				stillInMotion = true;
 			}
+			else if (Mathf.Abs(currentAlpha - targetAlpha) < 0.01f)
+			{
+				// This case is required to make the pieces opaque
+				if (movingPiece.side == Side.Black)
+				{
+					movingPiece.gameObject.GetComponent<MeshRenderer>().material = opaqueBlackMaterial;
+				}
+				else
+				{
+					movingPiece.gameObject.GetComponent<MeshRenderer>().material = opaqueWhiteMaterial;
+				}
+			}
 		}
 
 		if (!stillInMotion)
@@ -199,14 +216,6 @@ public class Animations {
 			piece.gameObject.GetComponent<Transform>().position = new Vector3(currentPosition.x + HardcodedOffset(piece).x,
 																				currentPosition.y + HardcodedOffset(piece).y,
 																				currentPosition.z + HardcodedOffset(piece).z);
-		}
-		else if(GameKeeper.isDebug)
-		{
-			GameKeeper gameKeeper = GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>();
-			float finalXPosition = gameKeeper.GetTransformFromPosition(piece.GetCurrentPosition()).x + HardcodedOffset(piece).x;
-			float finalYPosition = float.Parse(piece.gameObject.GetComponent<MeshRenderer>().bounds.extents.y.ToString("0.00")) + HardcodedOffset(piece).y;
-			float finalZPosition = gameKeeper.GetTransformFromPosition(piece.GetCurrentPosition()).z + HardcodedOffset(piece).z;
-			piece.gameObject.GetComponent<Transform>().position = new Vector3(finalXPosition, finalYPosition, finalZPosition);
 		}
 	}
 
@@ -285,6 +294,8 @@ public class Animations {
 
 	public static Vector3 InitializeStartAnimationSettings(AbstractPiece piece)
 	{
+		// Also take the liberty of initializing our shaders here, as their utility is somewhat related to the initial animation...
+
 		// Initially, aircraft will be off the board and at a higher elevation than that of the board
 		if (!GameKeeper.isDebug)
 		{
@@ -295,10 +306,14 @@ public class Animations {
 				if (piece.side == Side.Black)
 				{
 					multiplier = 1;
+
+					// The spaceship models are given an opaque shader
+					opaqueBlackMaterial = piece.gameObject.GetComponent<MeshRenderer>().material;
 				}
 				else
 				{
 					multiplier = -1;
+					opaqueWhiteMaterial = piece.gameObject.GetComponent<MeshRenderer>().material;
 				}
 				Vector3 finalTransform = new Vector3(initialTransform.x + multiplier * 2, initialTransform.y, initialTransform.z);
 				return finalTransform;
@@ -307,6 +322,15 @@ public class Animations {
 			{
 				// Assuming each King/Queen mesh has only one shader since they don't need glass
 				Material meshMaterial = piece.gameObject.GetComponent<MeshRenderer>().material;
+				if (piece.side == Side.Black)
+				{
+					// The core piece models are given a fade shader
+					fadeBlackMaterial = meshMaterial;
+				}
+				else
+				{
+					fadeWhiteMaterial = meshMaterial;
+				}
 				meshMaterial.SetColor("_Color", new Color(meshMaterial.GetColor("_Color").r, meshMaterial.GetColor("_Color").g, meshMaterial.GetColor("_Color").b, 0.0f));
 				return piece.gameObject.GetComponent<Transform>().position;
 			}
