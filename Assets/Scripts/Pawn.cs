@@ -39,7 +39,6 @@ public class Pawn : AbstractPiece {
 			if (passedPiece != null && passedPiece.GetType().Name.CompareTo(this.GetType().Name) == 0 && ((Pawn)passedPiece).allowEnPassantCapture)
 			{
 				this.chessBoard.KillPieceAtPosition(passedPiece.GetCurrentPosition(), this);
-				this.TryAnimateEnPassantCapture((Pawn)passedPiece);
 			}
 		}
 		else
@@ -52,7 +51,6 @@ public class Pawn : AbstractPiece {
 			if (passedPiece != null && passedPiece.GetType().Name.CompareTo(this.GetType().Name) == 0 && ((Pawn)passedPiece).allowEnPassantCapture)
 			{
 				this.chessBoard.KillPieceAtPosition(passedPiece.GetCurrentPosition(), this);
-				this.TryAnimateEnPassantCapture((Pawn)passedPiece);
 			}
 		}
 
@@ -85,19 +83,10 @@ public class Pawn : AbstractPiece {
 		}
 	}
 
-	public void TryAnimateEnPassantCapture(Pawn dyingPawn)
-	{
-		if (this.gameObject != null)
-		{
-			GameObject.Find(Constants.ActionCameraObject).GetComponent<ActionCamera>().EnableActionCamera(this, dyingPawn);
-			GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().DestroyPiece(dyingPawn);
-		}
-	}
-
 	public override void PerTurnProcessing()
 	{
 
-		if (GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().chessBoard.CurrentMovingSide() == this.side && this.allowEnPassantCapture)
+		if (this.chessBoard.CurrentMovingSide() == this.side && this.allowEnPassantCapture)
 		{
 			// Disable en passant vulnerability if the pawn is still alive on the player's turn
 			this.allowEnPassantCapture = false;

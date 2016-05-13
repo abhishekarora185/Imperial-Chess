@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class MoveIcon : MonoBehaviour {
 
@@ -20,6 +20,11 @@ public class MoveIcon : MonoBehaviour {
 	void OnMouseDown()
 	{
 		this.TryPlayDeathAnimation();
+
+        if (this.movingPiece.GetType().Name == Constants.PieceClassNames.Pawn)
+        {
+            this.TryAnimateEnPassantCapture();
+        }
 
 		GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().chessBoard.MoveTo(this.movingPiece, this.movePosition);
 		this.movingPiece.gameObject.GetComponent<PieceBehaviour>().isInAnimationState = true;
@@ -59,6 +64,34 @@ public class MoveIcon : MonoBehaviour {
 		{
 			GameObject.Find(Constants.ActionCameraObject).GetComponent<ActionCamera>().EnableActionCamera(this.movingPiece, pieceAtMovePosition);
 			GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().DestroyPiece(pieceAtMovePosition);
+		}
+	}
+
+	private void TryAnimateEnPassantCapture()
+	{
+		Position enPassantPosition;
+		if (this.movingPiece.side == Side.Black)
+		{
+			enPassantPosition = new Position(this.movePosition.GetColumn(), this.movePosition.GetRow() + 1);
+		}
+		else
+		{
+			enPassantPosition = new Position(this.movePosition.GetColumn(), this.movePosition.GetRow() - 1);
+		}
+
+		AbstractPiece pieceAtEnPassantPosition = GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().chessBoard.GetPieceAtPosition(enPassantPosition);
+
+		Pawn dyingPawn = null;
+
+		if (pieceAtEnPassantPosition != null && pieceAtEnPassantPosition.GetType().Name == Constants.PieceClassNames.Pawn && pieceAtEnPassantPosition.side != this.movingPiece.side && ((Pawn)pieceAtEnPassantPosition).allowEnPassantCapture)
+		{
+			dyingPawn = (Pawn) pieceAtEnPassantPosition;
+		}
+
+		if (dyingPawn != null)
+		{
+			GameObject.Find(Constants.ActionCameraObject).GetComponent<ActionCamera>().EnableActionCamera(this.movingPiece, dyingPawn);
+			GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().DestroyPiece(dyingPawn);
 		}
 	}
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class GameKeeper : MonoBehaviour {
 
-	public static bool isDebug = false;
+	public static bool isDebug = true;
 
 	public GameObject[] prefabs;
 
@@ -243,10 +243,10 @@ public class GameKeeper : MonoBehaviour {
 		for (column = Position.min + 2; column <= Position.max - 2; column++)
 		{
 			// Black Pawns
-			arrangement[new Position(column, 6)] = Constants.PieceCodes.BlackPawn;
+			arrangement[new Position(column + 1, 4)] = Constants.PieceCodes.BlackPawn;
 
 			// White Pawns
-			arrangement[new Position(column, 3)] = Constants.PieceCodes.WhitePawn;
+			arrangement[new Position(column, 2)] = Constants.PieceCodes.WhitePawn;
 		}
 
 		// Black Rooks
