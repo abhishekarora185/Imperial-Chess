@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class GameKeeper : MonoBehaviour {
 
-	public static bool isDebug = true;
+	public static bool isDebug = false;
 
 	public GameObject[] prefabs;
 
@@ -240,7 +240,7 @@ public class GameKeeper : MonoBehaviour {
 
 		int column;
 
-		for (column = Position.min + 2; column <= Position.max - 2; column++)
+		for (column = Position.min; column <= Position.min - 1; column++)
 		{
 			// Black Pawns
 			arrangement[new Position(column + 1, 4)] = Constants.PieceCodes.BlackPawn;
@@ -354,13 +354,21 @@ public class GameKeeper : MonoBehaviour {
 		{
 			this.chessBoard.ChangeMovingSide();
 
-			if (this.chessBoard.CurrentMovingSide() == Side.Black)
+			if (!this.chessBoard.IsKingInCheckmate(this.chessBoard.CurrentMovingSide()))
 			{
-				Instantiate(this.blackTurnIcon);
+				if (this.chessBoard.CurrentMovingSide() == Side.Black)
+				{
+					Instantiate(this.blackTurnIcon);
+				}
+				else
+				{
+					Instantiate(this.whiteTurnIcon);
+				}
 			}
 			else
 			{
-				Instantiate(this.whiteTurnIcon);
+				// Game Over!
+				EventManager.StopListening(Constants.EventNames.NewPlayerTurn);
 			}
 		});
 

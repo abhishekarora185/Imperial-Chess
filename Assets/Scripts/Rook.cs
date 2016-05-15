@@ -89,6 +89,17 @@ public class Rook : AbstractPiece
 		return movesForCurrentPosition;
 	}
 
+	public override AbstractPiece CopyPiece(AbstractPiece pieceToCopy)
+	{
+		pieceToCopy = base.CopyPiece(pieceToCopy);
+
+		Rook rookToCopy = (Rook)pieceToCopy;
+
+		rookToCopy.canCastle = this.canCastle;
+
+		return rookToCopy;
+	}
+
 	private void InitializationActions()
 	{
 		this.ComputeMoves();

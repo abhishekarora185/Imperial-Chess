@@ -95,6 +95,7 @@ public class Constants
 	public static string AuxiliaryAudioObject = "Auxiliary Audio";
 	public static string PieceTag = "Piece";
 	public static string TileTag = "Tile";
+	public static string PieceHolderTag = "PieceHolder";
 
 }
 

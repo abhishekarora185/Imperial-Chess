@@ -31,10 +31,52 @@ public abstract class AbstractPiece : MonoBehaviour
 		return this.AdditionalMoveProcessing(this.moves[this.currentPosition]);
 	}
 
+	public Bitboard GetSafeMovesForCurrentPosition()
+	{
+		Bitboard availableMoves = this.GetMovesForCurrentPosition();
+		foreach (Position position in availableMoves.GetPositions())
+		{
+			if (!IsMoveSafe(position))
+			{
+				availableMoves.FlipPosition(position);
+			}
+		}
+		return availableMoves;
+	}
+
 	// Processing done at the beginning of each turn
 	public abstract void PerTurnProcessing();
 
 	public abstract void PostMoveActions();
+
+	public virtual AbstractPiece CopyPiece(AbstractPiece pieceToCopy)
+	{
+		pieceToCopy.side = this.side;
+		pieceToCopy.currentPosition = this.currentPosition;
+
+		// Don't copy the chessboard as this function is mostly called when a new chessboard has to be created
+		pieceToCopy.moves = this.moves;
+
+		return pieceToCopy;
+	}
+
+
+	protected bool IsMoveSafe(Position movePosition)
+	{
+		bool safeMove = true;
+
+		Chessboard copyChessboard = Chessboard.MakeCopyOfChessboard(this.chessBoard);
+		copyChessboard.MoveTo(copyChessboard.GetPieceAtPosition(this.currentPosition), movePosition);
+
+		if (copyChessboard.IsKingInCheck(this.side))
+		{
+			safeMove = false;
+		}
+
+		GameObject.DestroyObject(copyChessboard.pieceHolderGameObject);
+
+		return safeMove;
+	}
 
 	protected abstract void ComputeMoves();
 

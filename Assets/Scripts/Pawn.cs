@@ -242,6 +242,18 @@ public class Pawn : AbstractPiece {
 		return movesForCurrentPosition;
 	}
 
+	public override AbstractPiece CopyPiece(AbstractPiece pieceToCopy)
+	{
+		pieceToCopy = base.CopyPiece(pieceToCopy);
+
+		Pawn pawnToCopy = (Pawn)pieceToCopy;
+
+		pawnToCopy.allowEnPassantCapture = this.allowEnPassantCapture;
+		pawnToCopy.initialPosition = this.initialPosition;
+
+		return pawnToCopy;
+	}
+
 	private void InitializationActions()
 	{
 		this.ComputeMoves();

@@ -21,7 +21,7 @@ public class King : AbstractPiece
 	// Update is called once per frame
 	void Update()
 	{
-		
+
 	}
 
 	public override void PostMoveActions()
@@ -88,6 +88,17 @@ public class King : AbstractPiece
 		movesForCurrentPosition = movesForCurrentPosition.ComputeRayIntersections(chessBoard.GetPieceLocations(this.side), this.GetCurrentPosition(), false);
 
 		return movesForCurrentPosition;
+	}
+
+	public override AbstractPiece CopyPiece(AbstractPiece pieceToCopy)
+	{
+		pieceToCopy = base.CopyPiece(pieceToCopy);
+
+		King kingToCopy = (King)pieceToCopy;
+
+		kingToCopy.canCastle = this.canCastle;
+
+		return kingToCopy;
 	}
 
 	private void InitializationActions()

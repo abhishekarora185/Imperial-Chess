@@ -24,7 +24,7 @@ public class PieceBehaviour : MonoBehaviour {
 
 		if (GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().hasGameStarted() && GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().chessBoard.CurrentMovingSide() == this.gameObject.GetComponent<AbstractPiece>().side)
 		{
-			Bitboard moveBitboard = this.gameObject.GetComponent<AbstractPiece>().GetMovesForCurrentPosition();
+			Bitboard moveBitboard = this.gameObject.GetComponent<AbstractPiece>().GetSafeMovesForCurrentPosition();
 
 			GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().ClearTiles();
 
