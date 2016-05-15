@@ -10,7 +10,11 @@ public class TurnIcon : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		this.aliveTime = 2.0f;
-		StartCoroutine(this.KillTurnIcon());
+		if (!GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().isGameOver())
+		{
+			// Allow the turn icon to persist
+			StartCoroutine(this.KillTurnIcon());
+		}
 		this.initialAngle = this.gameObject.GetComponent<Transform>().eulerAngles;
 
 		GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().TogglePauseGame();

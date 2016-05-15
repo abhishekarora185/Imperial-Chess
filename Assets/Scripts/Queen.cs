@@ -101,17 +101,15 @@ public class Queen : AbstractPiece
 
 	protected override Bitboard AdditionalMoveProcessing(Bitboard movesForCurrentPosition)
 	{
-		Chessboard chessBoard = GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().chessBoard;
-
 		if (this.side == Side.Black)
 		{
-			movesForCurrentPosition = movesForCurrentPosition.ComputeRayIntersections(chessBoard.GetPieceLocations(Side.White), this.GetCurrentPosition(), true);
+			movesForCurrentPosition = movesForCurrentPosition.ComputeRayIntersections(this.chessBoard.GetPieceLocations(Side.White), this.GetCurrentPosition(), true);
 		}
 		else
 		{
-			movesForCurrentPosition = movesForCurrentPosition.ComputeRayIntersections(chessBoard.GetPieceLocations(Side.Black), this.GetCurrentPosition(), true);
+			movesForCurrentPosition = movesForCurrentPosition.ComputeRayIntersections(this.chessBoard.GetPieceLocations(Side.Black), this.GetCurrentPosition(), true);
 		}
-		movesForCurrentPosition = movesForCurrentPosition.ComputeRayIntersections(chessBoard.GetPieceLocations(this.side), this.GetCurrentPosition(), false);
+		movesForCurrentPosition = movesForCurrentPosition.ComputeRayIntersections(this.chessBoard.GetPieceLocations(this.side), this.GetCurrentPosition(), false);
 
 		return movesForCurrentPosition;
 	}

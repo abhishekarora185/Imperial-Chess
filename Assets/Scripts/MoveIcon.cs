@@ -21,10 +21,15 @@ public class MoveIcon : MonoBehaviour {
 	{
 		this.TryPlayDeathAnimation();
 
-        if (this.movingPiece.GetType().Name == Constants.PieceClassNames.Pawn)
-        {
-            this.TryAnimateEnPassantCapture();
-        }
+		if (this.movingPiece.GetType().Name == Constants.PieceClassNames.Pawn)
+		{
+			this.TryAnimateEnPassantCapture();
+		}
+
+		if (this.movingPiece.GetType().Name == Constants.PieceClassNames.King)
+		{
+			this.TryAnimateRookCastling();
+		}
 
 		GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().chessBoard.MoveTo(this.movingPiece, this.movePosition);
 		this.movingPiece.gameObject.GetComponent<PieceBehaviour>().isInAnimationState = true;
@@ -92,6 +97,51 @@ public class MoveIcon : MonoBehaviour {
 		{
 			GameObject.Find(Constants.ActionCameraObject).GetComponent<ActionCamera>().EnableActionCamera(this.movingPiece, dyingPawn);
 			GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().DestroyPiece(dyingPawn);
+		}
+	}
+
+	private void TryAnimateRookCastling()
+	{
+		if (this.movePosition.GetRow() == this.movingPiece.GetCurrentPosition().GetRow() && 
+			Mathf.Abs(this.movePosition.GetColumn() - this.movingPiece.GetCurrentPosition().GetColumn()) == 2)
+		{
+			// Castling is happening!
+			if (this.movePosition.GetColumn() == 2)
+			{
+				// King side
+				GameObject rookGameObject = null;
+
+				foreach (GameObject piece in GameObject.FindGameObjectsWithTag(Constants.PieceTag))
+				{
+					if (piece.GetComponent<AbstractPiece>().side == this.movingPiece.side && piece.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.Rook && piece.GetComponent<AbstractPiece>().GetCurrentPosition().GetColumn() < this.movePosition.GetColumn())
+					{
+						rookGameObject = piece;
+						break;
+					}
+				}
+				if (rookGameObject != null)
+				{
+					rookGameObject.GetComponent<PieceBehaviour>().isInAnimationState = true;
+				}
+			}
+			else if (this.movePosition.GetColumn() == 6)
+			{
+				// Queen side
+				GameObject rookGameObject = null;
+
+				foreach (GameObject piece in GameObject.FindGameObjectsWithTag(Constants.PieceTag))
+				{
+					if (piece.GetComponent<AbstractPiece>().side == this.movingPiece.side && piece.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.Rook && piece.GetComponent<AbstractPiece>().GetCurrentPosition().GetColumn() > this.movePosition.GetColumn())
+					{
+						rookGameObject = piece;
+						break;
+					}
+				}
+				if (rookGameObject != null)
+				{
+					rookGameObject.GetComponent<PieceBehaviour>().isInAnimationState = true;
+				}
+			}
 		}
 	}
 

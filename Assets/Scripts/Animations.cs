@@ -178,7 +178,10 @@ public class Animations {
 					actionCamera.EnableMainCamera();
 				}
 
-				EventManager.TriggerEvent(Constants.EventNames.NewPlayerTurn);
+				if (GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().chessBoard.CurrentMovingSide() == movingPiece.side)
+				{
+					EventManager.TriggerEvent(Constants.EventNames.NewPlayerTurn);
+				}
 			}
 			else
 			{

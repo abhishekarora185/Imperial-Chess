@@ -28,6 +28,21 @@ public class King : AbstractPiece
 	{
 		if (this.canCastle)
 		{
+			// Move the Rook
+			// If this move was deemed valid in the first place, the Rook should be there in said position
+			if (this.GetCurrentPosition().GetColumn() == 2)
+			{
+				// King side castling
+				Rook kingSideRook = (Rook)this.chessBoard.GetPieceAtPosition(new Position(1, this.GetCurrentPosition().GetRow()));
+				this.chessBoard.MoveTo(kingSideRook, new Position(3, kingSideRook.GetCurrentPosition().GetRow()));
+			}
+			else if (this.GetCurrentPosition().GetColumn() == 6)
+			{
+				// Queen side castling
+				Rook queenSideRook = (Rook)this.chessBoard.GetPieceAtPosition(new Position(8, this.GetCurrentPosition().GetRow()));
+				this.chessBoard.MoveTo(queenSideRook, new Position(5, queenSideRook.GetCurrentPosition().GetRow()));
+			}
+
 			this.canCastle = false;
 		}
 	}
@@ -75,17 +90,61 @@ public class King : AbstractPiece
 
 	protected override Bitboard AdditionalMoveProcessing(Bitboard movesForCurrentPosition)
 	{
-		Chessboard chessBoard = GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().chessBoard;
 
 		if (this.side == Side.Black)
 		{
-			movesForCurrentPosition = movesForCurrentPosition.ComputeRayIntersections(chessBoard.GetPieceLocations(Side.White), this.GetCurrentPosition(), true);
+			movesForCurrentPosition = movesForCurrentPosition.ComputeRayIntersections(this.chessBoard.GetPieceLocations(Side.White), this.GetCurrentPosition(), true);
 		}
 		else
 		{
-			movesForCurrentPosition = movesForCurrentPosition.ComputeRayIntersections(chessBoard.GetPieceLocations(Side.Black), this.GetCurrentPosition(), true);
+			movesForCurrentPosition = movesForCurrentPosition.ComputeRayIntersections(this.chessBoard.GetPieceLocations(Side.Black), this.GetCurrentPosition(), true);
 		}
-		movesForCurrentPosition = movesForCurrentPosition.ComputeRayIntersections(chessBoard.GetPieceLocations(this.side), this.GetCurrentPosition(), false);
+		movesForCurrentPosition = movesForCurrentPosition.ComputeRayIntersections(this.chessBoard.GetPieceLocations(this.side), this.GetCurrentPosition(), false);
+
+		// The current moving side check is needed since we don't want to compute castling as a move when we're trying to see if the king is checked
+		// Castling
+		if (this.chessBoard.CurrentMovingSide() == this.side &&
+			this.canCastle && 
+			!this.chessBoard.IsKingInCheck(this.side)
+			)
+		{
+			// King side castling
+			if (this.chessBoard.GetPieceAtPosition(new Position(1, this.GetCurrentPosition().GetRow())) != null &&
+				this.chessBoard.GetPieceAtPosition(new Position(1, this.GetCurrentPosition().GetRow())).GetType().Name == Constants.PieceClassNames.Rook)
+			{
+				Rook kingSideRook = (Rook)this.chessBoard.GetPieceAtPosition(new Position(1, this.GetCurrentPosition().GetRow()));
+				// If both move positions are unoccupied
+				if (kingSideRook.canCastle &&
+					this.chessBoard.GetPieceAtPosition(new Position(2, this.GetCurrentPosition().GetRow())) == null &&
+					this.chessBoard.GetPieceAtPosition(new Position(3, this.GetCurrentPosition().GetRow())) == null
+					)
+				{
+					// The final move will be filtered if the King's target position leaves it in check, so the last check here should be the intermediate position, or where the Rook will be after the move
+					if (this.IsMoveSafe(new Position(3, this.GetCurrentPosition().GetRow())))
+					{
+						movesForCurrentPosition.FlipPosition(new Position(2, this.GetCurrentPosition().GetRow()));
+					}
+				}
+			}
+
+			// Queen side castling
+			if (this.chessBoard.GetPieceAtPosition(new Position(8, this.GetCurrentPosition().GetRow())) != null &&
+				this.chessBoard.GetPieceAtPosition(new Position(8, this.GetCurrentPosition().GetRow())).GetType().Name == Constants.PieceClassNames.Rook)
+			{
+				Rook queenSideRook = (Rook)this.chessBoard.GetPieceAtPosition(new Position(8, this.GetCurrentPosition().GetRow()));
+				if (queenSideRook.canCastle &&
+					this.chessBoard.GetPieceAtPosition(new Position(5, this.GetCurrentPosition().GetRow())) == null &&
+					this.chessBoard.GetPieceAtPosition(new Position(6, this.GetCurrentPosition().GetRow())) == null
+					)
+				{
+					// The final move will be filtered if the King's target position leaves it in check, so the last check here should be the intermediate position, or where the Rook will be after the move
+					if (this.IsMoveSafe(new Position(5, this.GetCurrentPosition().GetRow())))
+					{
+						movesForCurrentPosition.FlipPosition(new Position(6, this.GetCurrentPosition().GetRow()));
+					}
+				}
+			}
+		}
 
 		return movesForCurrentPosition;
 	}

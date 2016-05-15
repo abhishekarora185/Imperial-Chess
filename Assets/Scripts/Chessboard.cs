@@ -284,6 +284,7 @@ public class Chessboard {
 			if (newPiece != null)
 			{
 				newPiece = piece.CopyPiece(newPiece);
+				newPiece.SetChessboard(newChessboard);
 				newChessboard.activePieces.Add(newPiece);
 			}
 		}

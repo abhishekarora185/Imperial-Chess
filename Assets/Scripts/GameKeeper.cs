@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class GameKeeper : MonoBehaviour {
 
-	public static bool isDebug = false;
+	public static bool isDebug = true;
 
 	public GameObject[] prefabs;
 
@@ -16,6 +16,8 @@ public class GameKeeper : MonoBehaviour {
 	public GameObject blackTurnIcon;
 
 	public Chessboard chessBoard;
+
+    private bool gameOver;
 
 	private bool gameStarted;
 
@@ -36,6 +38,7 @@ public class GameKeeper : MonoBehaviour {
 		}
 
 		this.chessBoard = new Chessboard();
+		this.gameOver = false;
 		this.gameStarted = false;
 		this.piecesSpawned = 0;
 
@@ -70,6 +73,11 @@ public class GameKeeper : MonoBehaviour {
 	public bool hasGameStarted()
 	{
 		return this.gameStarted;
+	}
+
+	public bool isGameOver()
+	{
+		return this.gameOver;
 	}
 
 	public float GetSquareSpacing()
@@ -243,10 +251,10 @@ public class GameKeeper : MonoBehaviour {
 		for (column = Position.min; column <= Position.min - 1; column++)
 		{
 			// Black Pawns
-			arrangement[new Position(column + 1, 4)] = Constants.PieceCodes.BlackPawn;
+			//arrangement[new Position(column + 1, 4)] = Constants.PieceCodes.BlackPawn;
 
 			// White Pawns
-			arrangement[new Position(column, 2)] = Constants.PieceCodes.WhitePawn;
+			//arrangement[new Position(column, 2)] = Constants.PieceCodes.WhitePawn;
 		}
 
 		// Black Rooks
@@ -256,7 +264,7 @@ public class GameKeeper : MonoBehaviour {
 		//White Rooks
 		arrangement[new Position(1, 1)] = Constants.PieceCodes.WhiteRook;
 		arrangement[new Position(8, 1)] = Constants.PieceCodes.WhiteRook;
-
+        /*
 		// Black Knights
 		arrangement[new Position(2, 8)] = Constants.PieceCodes.BlackKnight;
 		arrangement[new Position(7, 8)] = Constants.PieceCodes.BlackKnight;
@@ -272,12 +280,12 @@ public class GameKeeper : MonoBehaviour {
 		//White Bishops
 		arrangement[new Position(3, 1)] = Constants.PieceCodes.WhiteBishop;
 		arrangement[new Position(6, 1)] = Constants.PieceCodes.WhiteBishop;
-
+        */
 		// Kings & Queens
 		arrangement[new Position(4, 8)] = Constants.PieceCodes.BlackKing;
-		arrangement[new Position(5, 8)] = Constants.PieceCodes.BlackQueen;
+		//arrangement[new Position(5, 8)] = Constants.PieceCodes.BlackQueen;
 		arrangement[new Position(4, 1)] = Constants.PieceCodes.WhiteKing;
-		arrangement[new Position(5, 1)] = Constants.PieceCodes.WhiteQueen;
+		//arrangement[new Position(5, 1)] = Constants.PieceCodes.WhiteQueen;
 
 		return arrangement;
 	}
@@ -287,55 +295,67 @@ public class GameKeeper : MonoBehaviour {
 	{
 		EventManager.StartListening(Constants.EventNames.PawnsLanded, () =>
 		{
-			foreach (GameObject piece in GameObject.FindGameObjectsWithTag(Constants.PieceTag))
+			if (!isDebug)
 			{
-				if (piece.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.Bishop)
+				foreach (GameObject piece in GameObject.FindGameObjectsWithTag(Constants.PieceTag))
 				{
-					piece.GetComponent<PieceBehaviour>().isInAnimationState = true;
+					if (piece.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.Bishop)
+					{
+						piece.GetComponent<PieceBehaviour>().isInAnimationState = true;
+					}
 				}
-			}
 
-			EventManager.StopListening(Constants.EventNames.PawnsLanded);
+				EventManager.StopListening(Constants.EventNames.PawnsLanded);
+			}
 		});
 
 		EventManager.StartListening(Constants.EventNames.BishopsLanded, () =>
 		{
-			foreach (GameObject piece in GameObject.FindGameObjectsWithTag(Constants.PieceTag))
+			if (!isDebug)
 			{
-				if (piece.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.Knight)
+				foreach (GameObject piece in GameObject.FindGameObjectsWithTag(Constants.PieceTag))
 				{
-					piece.GetComponent<PieceBehaviour>().isInAnimationState = true;
+					if (piece.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.Knight)
+					{
+						piece.GetComponent<PieceBehaviour>().isInAnimationState = true;
+					}
 				}
-			}
 
-			EventManager.StopListening(Constants.EventNames.BishopsLanded);
+				EventManager.StopListening(Constants.EventNames.BishopsLanded);
+			}
 		});
 
 		EventManager.StartListening(Constants.EventNames.KnightsLanded, () =>
 		{
-			foreach (GameObject piece in GameObject.FindGameObjectsWithTag(Constants.PieceTag))
+			if (!isDebug)
 			{
-				if (piece.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.Rook)
+				foreach (GameObject piece in GameObject.FindGameObjectsWithTag(Constants.PieceTag))
 				{
-					piece.GetComponent<PieceBehaviour>().isInAnimationState = true;
+					if (piece.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.Rook)
+					{
+						piece.GetComponent<PieceBehaviour>().isInAnimationState = true;
+					}
 				}
-			}
 
-			EventManager.StopListening(Constants.EventNames.KnightsLanded);
+				EventManager.StopListening(Constants.EventNames.KnightsLanded);
+			}
 		});
 
 		EventManager.StartListening(Constants.EventNames.RooksLanded, () =>
 		{
-			foreach (GameObject piece in GameObject.FindGameObjectsWithTag(Constants.PieceTag))
+			if (!isDebug)
 			{
-				if (piece.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.Queen ||
-					piece.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.King)
+				foreach (GameObject piece in GameObject.FindGameObjectsWithTag(Constants.PieceTag))
 				{
-					piece.GetComponent<PieceBehaviour>().isInAnimationState = true; 
+					if (piece.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.Queen ||
+						piece.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.King)
+					{
+						piece.GetComponent<PieceBehaviour>().isInAnimationState = true;
+					}
 				}
-			}
 
-			EventManager.StopListening(Constants.EventNames.BishopsLanded);
+				EventManager.StopListening(Constants.EventNames.BishopsLanded);
+			}
 		});
 
 		EventManager.StartListening(Constants.EventNames.PieceSpawned, () =>
@@ -353,7 +373,6 @@ public class GameKeeper : MonoBehaviour {
 		EventManager.StartListening(Constants.EventNames.NewPlayerTurn, () =>
 		{
 			this.chessBoard.ChangeMovingSide();
-
 			if (!this.chessBoard.IsKingInCheckmate(this.chessBoard.CurrentMovingSide()))
 			{
 				if (this.chessBoard.CurrentMovingSide() == Side.Black)
@@ -368,6 +387,7 @@ public class GameKeeper : MonoBehaviour {
 			else
 			{
 				// Game Over!
+				this.gameOver = true;
 				EventManager.StopListening(Constants.EventNames.NewPlayerTurn);
 			}
 		});
