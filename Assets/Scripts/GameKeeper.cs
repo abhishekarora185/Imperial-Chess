@@ -167,7 +167,10 @@ public class GameKeeper : MonoBehaviour {
 		}
 		else
 		{
-			Destroy(piece.gameObject);
+			piece.gameObject.GetComponent<ParticleSystem>().Play();
+			piece.gameObject.GetComponent<AudioSource>().Play();
+			piece.gameObject.GetComponent<MeshRenderer>().enabled = false;
+			Destroy(piece.gameObject, piece.gameObject.GetComponent<ParticleSystem>().duration);
 		}
 	}
 
@@ -282,9 +285,9 @@ public class GameKeeper : MonoBehaviour {
         */
 		// Kings & Queens
 		arrangement[new Position(4, 8)] = Constants.PieceCodes.BlackKing;
-		//arrangement[new Position(5, 8)] = Constants.PieceCodes.BlackQueen;
+		arrangement[new Position(5, 8)] = Constants.PieceCodes.BlackQueen;
 		arrangement[new Position(4, 1)] = Constants.PieceCodes.WhiteKing;
-		//arrangement[new Position(5, 1)] = Constants.PieceCodes.WhiteQueen;
+		arrangement[new Position(5, 1)] = Constants.PieceCodes.WhiteQueen;
 
 		return arrangement;
 	}
