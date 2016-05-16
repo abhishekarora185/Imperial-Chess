@@ -96,6 +96,7 @@ public class Constants
 	public static string PieceTag = "Piece";
 	public static string TileTag = "Tile";
 	public static string PieceHolderTag = "PieceHolder";
+	public static string VictoryText = "victory";
 
 }
 

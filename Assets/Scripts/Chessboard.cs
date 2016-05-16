@@ -219,14 +219,18 @@ public class Chessboard {
 
 		// Common sense dictates that there must be one and only one king on either side
 		King kingToCheck = (King)GetPiecesByTypeAndSide(typeof(King), sideToCheck).ToArray()[0];
-		Bitboard availableMoves = kingToCheck.GetMovesForCurrentPosition();
+		Bitboard availableMoves = kingToCheck.GetSafeMovesForCurrentPosition();
 
-		foreach (byte row in availableMoves.GetBitboard())
+		int row, column;
+
+		for (column = Position.min; column <= Position.max; column++)
 		{
-			if (row != 0)
+			for (row = Position.min; row <= Position.max; row++)
 			{
-				cannotMove = false;
-				break;
+				if (availableMoves.ValueAtPosition(new Position(column,row)) > 0)
+				{
+					cannotMove = false;
+				}
 			}
 		}
 

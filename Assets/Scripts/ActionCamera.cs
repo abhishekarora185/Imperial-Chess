@@ -6,15 +6,15 @@ public class ActionCamera : MonoBehaviour {
 	// This is needed to prevent the game loop playing during the death audio clip when the player(s) take killing turns too fast in succession
 	private Queue deathAudioClipPlayQueue;
 
-	AudioSource gameLoopAudioSource;
-    AudioSource deathAudioSource;
+	public AudioSource gameLoopAudioSource;
+	public AudioSource deathAudioSource;
 
 	// Use this for initialization
 	void Start () {
 		this.EnableMainCamera();
 		this.deathAudioClipPlayQueue = new Queue();
 		this.gameLoopAudioSource = GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<AudioSource>();
-        this.deathAudioSource = GameObject.Find(Constants.AuxiliaryAudioObject).GetComponent<AudioSource>();
+		this.deathAudioSource = GameObject.Find(Constants.AuxiliaryAudioObject).GetComponent<AudioSource>();
 	}
 	
 	// Update is called once per frame

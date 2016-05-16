@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class GameKeeper : MonoBehaviour {
 
-	public static bool isDebug = true;
+	public static bool isDebug = false;
 
 	public GameObject[] prefabs;
 
@@ -17,7 +17,7 @@ public class GameKeeper : MonoBehaviour {
 
 	public Chessboard chessBoard;
 
-    private bool gameOver;
+	private bool gameOver;
 
 	private bool gameStarted;
 
@@ -36,7 +36,6 @@ public class GameKeeper : MonoBehaviour {
 		{
 			Application.targetFrameRate = 60;
 		}
-
 		this.chessBoard = new Chessboard();
 		this.gameOver = false;
 		this.gameStarted = false;
@@ -389,6 +388,20 @@ public class GameKeeper : MonoBehaviour {
 				// Game Over!
 				this.gameOver = true;
 				EventManager.StopListening(Constants.EventNames.NewPlayerTurn);
+
+				if (this.chessBoard.CurrentMovingSide() == Side.Black)
+				{
+					Instantiate(this.whiteTurnIcon);
+					GameObject.Find(Constants.ActionCameraObject).GetComponent<ActionCamera>().deathAudioSource.clip = (AudioClip)Resources.Load(Constants.AudioClipNames.AudioDirectory + Constants.AudioClipNames.RebelAttack, typeof(AudioClip));
+				}
+				else
+				{
+					Instantiate(this.blackTurnIcon);
+					GameObject.Find(Constants.ActionCameraObject).GetComponent<ActionCamera>().deathAudioSource.clip = (AudioClip)Resources.Load(Constants.AudioClipNames.AudioDirectory + Constants.AudioClipNames.ImperialMarch, typeof(AudioClip));
+				}
+				GameObject.Find(Constants.VictoryText).GetComponent<TextMesh>().text = Constants.VictoryText;
+				GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<AudioSource>().Stop();
+				GameObject.Find(Constants.ActionCameraObject).GetComponent<ActionCamera>().deathAudioSource.Play();
 			}
 		});
 
