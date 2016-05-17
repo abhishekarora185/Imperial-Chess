@@ -84,5 +84,9 @@ public class OpeningCrawl : MonoBehaviour {
 		{
 			textMesh.enabled = false;
 		}
+		foreach (SpriteRenderer spriteRenderer in this.gameObject.GetComponentsInChildren<SpriteRenderer>())
+		{
+			spriteRenderer.enabled = false;
+		}
 	}
 }
