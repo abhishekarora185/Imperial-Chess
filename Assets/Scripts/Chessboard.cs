@@ -214,23 +214,14 @@ public class Chessboard {
 
 	public bool IsKingInCheckmate(Side sideToCheck)
 	{
-		// Checks the moves of the King. If the king is in check and there are no available moves, it's game over!
+		// Checks the moves of all the pieces on the moving side. If the king is in check and there are no available moves, it's game over!
 		bool inCheckmate = false, inCheck = IsKingInCheck(sideToCheck), cannotMove = true;
 
-		// Common sense dictates that there must be one and only one king on either side
-		King kingToCheck = (King)GetPiecesByTypeAndSide(typeof(King), sideToCheck).ToArray()[0];
-		Bitboard availableMoves = kingToCheck.GetSafeMovesForCurrentPosition();
-
-		int row, column;
-
-		for (column = Position.min; column <= Position.max; column++)
+		foreach (AbstractPiece activePiece in this.activePieces)
 		{
-			for (row = Position.min; row <= Position.max; row++)
+			if (activePiece.side == sideToCheck && activePiece.GetSafeMovesForCurrentPosition().GetPositions().Count > 0)
 			{
-				if (availableMoves.ValueAtPosition(new Position(column,row)) > 0)
-				{
-					cannotMove = false;
-				}
+				cannotMove = false;
 			}
 		}
 
