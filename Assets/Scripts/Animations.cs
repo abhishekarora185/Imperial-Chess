@@ -101,7 +101,16 @@ public class Animations {
 		float lerpSpeed;
 		if (gameKeeper.hasGameStarted())
 		{
-			lerpSpeed = 0.02f;
+			if (GameObject.Find(Constants.ActionCameraObject).GetComponent<ActionCamera>().isActionCameraEnabled())
+			{
+				// Nice and slow
+				lerpSpeed = 0.02f;
+			}
+			else
+			{
+				// No one's gonna wait that long
+				lerpSpeed = 0.04f;
+			}
 		}
 		else
 		{
