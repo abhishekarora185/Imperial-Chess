@@ -32,10 +32,6 @@ public class GameKeeper : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
-		{
-			Application.targetFrameRate = 60;
-		}
 		this.chessBoard = new Chessboard();
 		this.gameOver = false;
 		this.gameStarted = false;
