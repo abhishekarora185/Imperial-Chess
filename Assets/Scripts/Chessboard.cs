@@ -55,6 +55,11 @@ public class Chessboard {
 		}
 	}
 
+	public List<AbstractPiece> getActivePieces()
+	{
+		return this.activePieces;
+	}
+
 	// Called by pieces whenever they need to move
 	public void MoveTo(AbstractPiece piece, Position position)
 	{

@@ -22,7 +22,9 @@ public class PieceBehaviour : MonoBehaviour {
 	{
 		// This assumes (everywhere) that each game object that has this script attached also has an AbstractPiece script attached
 
-		if (GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().hasGameStarted() && GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().chessBoard.CurrentMovingSide() == this.gameObject.GetComponent<AbstractPiece>().side)
+		if (!GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().isSideControlledByAI(this.gameObject.GetComponent<AbstractPiece>().side) &&
+			GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().hasGameStarted()
+			&& GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().chessBoard.CurrentMovingSide() == this.gameObject.GetComponent<AbstractPiece>().side)
 		{
 			Bitboard moveBitboard = this.gameObject.GetComponent<AbstractPiece>().GetSafeMovesForCurrentPosition();
 

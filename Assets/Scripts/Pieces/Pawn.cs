@@ -65,7 +65,7 @@ public class Pawn : AbstractPiece {
 
 	public void TryPromoteGameObjectPawn()
 	{
-		// One of several pieces of inconsistent code where the pieces are aware of GameObjects
+		// Inconsistent code where the piece is aware of GameObjects
 		if (this.gameObject != null)
 		{
 			if (this.side == Side.Black && this.GetCurrentPosition().GetRow() == Position.min)

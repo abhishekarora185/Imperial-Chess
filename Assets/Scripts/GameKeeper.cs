@@ -30,22 +30,34 @@ public class GameKeeper : MonoBehaviour {
 	// Position to coordinate mapping
 	private Dictionary<Position, Vector3> squares;
 
+	private Dictionary<Side, bool> isAIControllingSide;
+
 	// Use this for initialization
 	void Start () {
-		this.chessBoard = new Chessboard();
-		this.gameOver = false;
-		this.gameStarted = false;
-		this.piecesSpawned = 0;
 
-		Animations.PlayOpeningCrawl();
-		this.SetEventHandlers();
-
-		this.ComputeSquares();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 	
+	}
+
+	public void InitializeGamekeeper(bool isWhiteAI, bool isBlackAI)
+	{
+		GameObject.Find(Constants.TextGameObjectNames.OpeningCrawl).AddComponent<OpeningCrawl>();
+
+		this.chessBoard = new Chessboard();
+		this.gameOver = false;
+		this.gameStarted = false;
+		this.piecesSpawned = 0;
+		this.isAIControllingSide = new Dictionary<Side, bool>();
+		this.isAIControllingSide[Side.White] = isWhiteAI;
+		this.isAIControllingSide[Side.Black] = isBlackAI;
+
+		Animations.PlayOpeningCrawl();
+		this.SetEventHandlers();
+
+		this.ComputeSquares();
 	}
 
 	public void TogglePauseGame()
@@ -73,6 +85,11 @@ public class GameKeeper : MonoBehaviour {
 	public bool isGameOver()
 	{
 		return this.gameOver;
+	}
+
+	public bool isSideControlledByAI(Side side)
+	{
+		return this.isAIControllingSide[side];
 	}
 
 	public float GetSquareSpacing()
@@ -380,6 +397,13 @@ public class GameKeeper : MonoBehaviour {
 				else
 				{
 					Instantiate(this.whiteTurnIcon);
+				}
+
+				if (this.isSideControlledByAI(this.chessBoard.CurrentMovingSide()))
+				{
+					// Make the AI compute its next move, and handle movement and animation to the new position
+					Move nextMove = AI.computeBestMove(this.chessBoard.CurrentMovingSide(), this.chessBoard);
+					MoveActions.standardMoveActions(nextMove);
 				}
 			}
 			else

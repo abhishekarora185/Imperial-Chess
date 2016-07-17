@@ -18,6 +18,7 @@ public class Animations {
 	public static IEnumerator ALongTimeAgo()
 	{
 		GameObject ALongTimeAgo = GameObject.Find(Constants.TextGameObjectNames.ALongTimeAgo);
+		ALongTimeAgo.GetComponent<MeshRenderer>().enabled = true;
 		yield return new WaitForSeconds(5);
 		ALongTimeAgo.GetComponent<MeshRenderer>().enabled = false;
 		if (GameObject.Find(Constants.TextGameObjectNames.StarWarsLogo) != null)

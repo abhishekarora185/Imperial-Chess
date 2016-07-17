@@ -71,6 +71,12 @@ public class Constants
 		public static string StarWarsLogo = "Star Wars Logo";
 
 		public static string OpeningCrawl = "Opening Crawl";
+
+		public static string GameModeSelection = "Game Mode Selection";
+
+		public static string SinglePlayerMode = "Single";
+
+		public static string MultiPlayerMode = "Multi";
 	}
 
 	public class AudioClipNames
@@ -104,61 +110,4 @@ public enum Side
 {
 	Black,
 	White
-}
-
-public class Position: IEquatable<Position>
-{
-	private int row;
-
-	private int column;
-
-	public static int min = 1;
-
-	public static int max = 8;
-
-	public Position(int column, int row)
-	{
-		this.row = row;
-		this.column = column;
-	}
-
-	public int GetRow()
-	{
-		return this.row;
-	}
-
-	public void SetRow(int row)
-	{
-		this.row = row;
-	}
-
-	public int GetColumn()
-	{
-		return this.column;
-	}
-
-	public void SetColumn(int column)
-	{
-		this.column = column;
-	}
-
-	public override string ToString()
-	{
-		return ((char)(64 + this.GetColumn()) + string.Empty + this.GetRow());
-	}
-
-	public override bool Equals(object obj)
-	{
-		return Equals(obj as Position);
-	}
-
-	public bool Equals(Position position)
-	{
-		return (position != null && this.GetColumn() == position.GetColumn() && this.GetRow() == position.GetRow());
-	}
-
-	public override int GetHashCode()
-	{
-		return (19 + this.GetRow()) * 19 + this.GetColumn();
-	}
 }
