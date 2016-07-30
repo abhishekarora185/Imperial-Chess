@@ -19,6 +19,21 @@ public class Constants
 		public static int WhiteQueen = 9;
 		public static int BlackKing = 10;
 		public static int WhiteKing = 11;
+
+		public static Dictionary<int, Type> pieceCodeToPieceTypeMapping = new Dictionary<int, Type> {
+			{BlackPawn, typeof(Pawn)},
+			{WhitePawn, typeof(Pawn)},
+			{BlackRook, typeof(Rook)},
+			{WhiteRook, typeof(Rook)},
+			{BlackBishop, typeof(Bishop)},
+			{WhiteBishop, typeof(Bishop)},
+			{BlackKnight, typeof(Knight)},
+			{WhiteKnight, typeof(Knight)},
+			{BlackQueen, typeof(Queen)},
+			{WhiteQueen, typeof(Queen)},
+			{BlackKing, typeof(King)},
+			{WhiteKing, typeof(King)}
+		};
 	}
 
 	public class PieceNames

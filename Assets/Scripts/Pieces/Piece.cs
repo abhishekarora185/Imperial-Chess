@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class AbstractPiece : MonoBehaviour
+public abstract class AbstractPiece
 {
 	public Side side;
 
@@ -10,6 +10,11 @@ public abstract class AbstractPiece : MonoBehaviour
 	protected Position currentPosition;
 
 	protected Dictionary<Position, Bitboard> moves;
+
+	public AbstractPiece()
+	{
+		this.InitializationActions();
+	}
 
 	public Position GetCurrentPosition()
 	{
@@ -73,10 +78,10 @@ public abstract class AbstractPiece : MonoBehaviour
 			safeMove = false;
 		}
 
-		GameObject.DestroyObject(copyChessboard.pieceHolderGameObject);
-
 		return safeMove;
 	}
+
+    protected abstract void InitializationActions();
 
 	protected abstract void ComputeMoves();
 

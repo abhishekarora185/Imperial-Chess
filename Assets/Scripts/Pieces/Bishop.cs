@@ -4,6 +4,11 @@ using UnityEngine;
 public class Bishop : AbstractPiece
 {
 
+	public Bishop()
+	{
+		this.InitializationActions();
+	}
+
 	public Bishop(Position position)
 	{
 		this.InitializationActions();
@@ -102,7 +107,7 @@ public class Bishop : AbstractPiece
 		return movesForCurrentPosition;
 	}
 
-	private void InitializationActions()
+	protected override void InitializationActions()
 	{
 		this.ComputeMoves();
 	}

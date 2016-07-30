@@ -3,6 +3,10 @@ using UnityEngine;
 
 public class Knight : AbstractPiece
 {
+	public Knight()
+	{
+		this.InitializationActions();
+	}
 
 	public Knight(Position position)
 	{
@@ -84,7 +88,7 @@ public class Knight : AbstractPiece
 		return movesForCurrentPosition;
 	}
 
-	private void InitializationActions()
+	protected override void InitializationActions()
 	{
 		this.ComputeMoves();
 	}

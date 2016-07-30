@@ -6,6 +6,11 @@ public class Rook : AbstractPiece
 
 	public bool canCastle;
 
+	public Rook()
+	{
+		this.InitializationActions();
+	}
+
 	public Rook(Position position)
 	{
 		this.InitializationActions();
@@ -98,7 +103,7 @@ public class Rook : AbstractPiece
 		return rookToCopy;
 	}
 
-	private void InitializationActions()
+	protected override void InitializationActions()
 	{
 		this.ComputeMoves();
 		this.canCastle = true;

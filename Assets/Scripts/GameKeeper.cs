@@ -146,11 +146,27 @@ public class GameKeeper : MonoBehaviour {
 			GameObject spawnedPiece = (GameObject)Instantiate(prefab,
 				this.squares[spawnPosition],
 				prefab.GetComponent<Transform>().rotation);
-			spawnedPiece.GetComponent<AbstractPiece>().SetCurrentPosition(spawnPosition);
+			spawnedPiece.GetComponent<PieceBehaviour>().setPiece(Constants.PieceCodes.pieceCodeToPieceTypeMapping[spawnArrangement[spawnPosition]]);
+			spawnedPiece.GetComponent<PieceBehaviour>().getPiece().SetCurrentPosition(spawnPosition);
 
-			this.chessBoard.AddPiece(spawnedPiece.GetComponent<AbstractPiece>());
+			if (spawnedPiece.name.ToLower().Contains(Side.Black.ToString().ToLower()))
+			{
+				spawnedPiece.GetComponent<PieceBehaviour>().getPiece().side = Side.Black;
+			}
+			else
+			{
+				spawnedPiece.GetComponent<PieceBehaviour>().getPiece().side = Side.White;
+			}
 
-			this.chessBoard.FlipBitAtPositionOfBitboard(spawnedPiece.GetComponent<AbstractPiece>().side, spawnPosition);
+			// Pawns' initial positions need to be set, and their moves need to be computed based on their side
+			if (spawnedPiece.GetComponent<PieceBehaviour>().getPiece().GetType() == typeof(Pawn))
+			{
+				((Pawn)spawnedPiece.GetComponent<PieceBehaviour>().getPiece()).initializePawn((spawnedPiece.GetComponent<PieceBehaviour>().getPiece().GetCurrentPosition()));
+			}
+
+			this.chessBoard.AddPiece(spawnedPiece.GetComponent<PieceBehaviour>().getPiece());
+
+			this.chessBoard.FlipBitAtPositionOfBitboard(spawnedPiece.GetComponent<PieceBehaviour>().getPiece().side, spawnPosition);
 		}
 
 		this.PostSpawnSettings();
@@ -163,15 +179,31 @@ public class GameKeeper : MonoBehaviour {
 		GameObject spawnedPiece = (GameObject)Instantiate(this.prefabs[pieceCode],
 				this.squares[spawnPosition],
 				this.prefabs[pieceCode].GetComponent<Transform>().rotation);
-		spawnedPiece.GetComponent<AbstractPiece>().SetCurrentPosition(spawnPosition);
-		this.chessBoard.AddPiece(spawnedPiece.GetComponent<AbstractPiece>());
+
+		// The chessBoard would have created a Queen piece during the pawn's post move actions, so just set the new game object's piece to the last one in the piece queue of the chessBoard
+		spawnedPiece.GetComponent<PieceBehaviour>().setPiece(this.chessBoard.getActivePieces().ToArray()[this.chessBoard.getActivePieces().Count - 1]);
 
 		this.PostPromotionSpawnSettings(spawnedPiece);
 	}
 
-	public void DestroyPiece(AbstractPiece piece)
+	public GameObject GetGameObjectFromPiece(AbstractPiece piece)
 	{
-		if (Animations.isSpaceship(piece))
+		GameObject gameObjectOfPiece = null;
+
+		foreach (GameObject pieceGameObject in GameObject.FindGameObjectsWithTag(Constants.PieceTag))
+		{
+			if (pieceGameObject.GetComponent<PieceBehaviour>().getPiece().Equals(piece))
+			{
+				gameObjectOfPiece = pieceGameObject;
+			}
+		}
+
+		return gameObjectOfPiece;
+	}
+
+	public void DestroyPiece(PieceBehaviour piece)
+	{
+		if (Animations.isSpaceship(piece.getPiece()))
 		{
 			piece.gameObject.GetComponent<ParticleSystem>().Play();
 			piece.gameObject.GetComponent<AudioSource>().Play();
@@ -263,14 +295,16 @@ public class GameKeeper : MonoBehaviour {
 
 		int column;
 
-		for (column = Position.min; column <= Position.min - 1; column++)
+		for (column = Position.min; column <= Position.max/2; column++)
 		{
 			// Black Pawns
-			//arrangement[new Position(column + 1, 4)] = Constants.PieceCodes.BlackPawn;
+			arrangement[new Position(column, 4)] = Constants.PieceCodes.BlackPawn;
 
 			// White Pawns
-			//arrangement[new Position(column, 2)] = Constants.PieceCodes.WhitePawn;
+			arrangement[new Position(Position.max/2+column, 2)] = Constants.PieceCodes.WhitePawn;
 		}
+
+        arrangement[new Position(2, 7)] = Constants.PieceCodes.WhitePawn;
 
 		// Black Rooks
 		arrangement[new Position(1, 8)] = Constants.PieceCodes.BlackRook;
@@ -300,7 +334,7 @@ public class GameKeeper : MonoBehaviour {
 		arrangement[new Position(4, 8)] = Constants.PieceCodes.BlackKing;
 		arrangement[new Position(5, 8)] = Constants.PieceCodes.BlackQueen;
 		arrangement[new Position(4, 1)] = Constants.PieceCodes.WhiteKing;
-		arrangement[new Position(5, 1)] = Constants.PieceCodes.WhiteQueen;
+		//arrangement[new Position(5, 1)] = Constants.PieceCodes.WhiteQueen;
 
 		return arrangement;
 	}
@@ -314,7 +348,7 @@ public class GameKeeper : MonoBehaviour {
 			{
 				foreach (GameObject piece in GameObject.FindGameObjectsWithTag(Constants.PieceTag))
 				{
-					if (piece.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.Bishop)
+					if (piece.GetComponent<PieceBehaviour>().getPiece().GetType().Name == Constants.PieceClassNames.Bishop)
 					{
 						piece.GetComponent<PieceBehaviour>().isInAnimationState = true;
 					}
@@ -330,7 +364,7 @@ public class GameKeeper : MonoBehaviour {
 			{
 				foreach (GameObject piece in GameObject.FindGameObjectsWithTag(Constants.PieceTag))
 				{
-					if (piece.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.Knight)
+					if (piece.GetComponent<PieceBehaviour>().getPiece().GetType().Name == Constants.PieceClassNames.Knight)
 					{
 						piece.GetComponent<PieceBehaviour>().isInAnimationState = true;
 					}
@@ -346,7 +380,7 @@ public class GameKeeper : MonoBehaviour {
 			{
 				foreach (GameObject piece in GameObject.FindGameObjectsWithTag(Constants.PieceTag))
 				{
-					if (piece.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.Rook)
+					if (piece.GetComponent<PieceBehaviour>().getPiece().GetType().Name == Constants.PieceClassNames.Rook)
 					{
 						piece.GetComponent<PieceBehaviour>().isInAnimationState = true;
 					}
@@ -362,8 +396,8 @@ public class GameKeeper : MonoBehaviour {
 			{
 				foreach (GameObject piece in GameObject.FindGameObjectsWithTag(Constants.PieceTag))
 				{
-					if (piece.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.Queen ||
-						piece.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.King)
+					if (piece.GetComponent<PieceBehaviour>().getPiece().GetType().Name == Constants.PieceClassNames.Queen ||
+						piece.GetComponent<PieceBehaviour>().getPiece().GetType().Name == Constants.PieceClassNames.King)
 					{
 						piece.GetComponent<PieceBehaviour>().isInAnimationState = true;
 					}
@@ -430,7 +464,7 @@ public class GameKeeper : MonoBehaviour {
 
 	}
 
-	private void TrimName(AbstractPiece piece)
+	private void TrimName(PieceBehaviour piece)
 	{
 		if (piece.gameObject.name.IndexOf(Constants.PieceNames.Clone) > -1)
 		{
@@ -442,20 +476,20 @@ public class GameKeeper : MonoBehaviour {
 	{
 		foreach (GameObject spawnedObject in GameObject.FindGameObjectsWithTag(Constants.PieceTag))
 		{
-			TrimName(spawnedObject.GetComponent<AbstractPiece>());
-			spawnedObject.GetComponent<AbstractPiece>().SetChessboard(this.chessBoard);
+			TrimName(spawnedObject.GetComponent<PieceBehaviour>());
+			spawnedObject.GetComponent<PieceBehaviour>().getPiece().SetChessboard(this.chessBoard);
 
 			if (!isDebug && !hasGameStarted())
 			{
-				spawnedObject.transform.position = Animations.InitializeStartAnimationSettings(spawnedObject.GetComponent<AbstractPiece>());
+				spawnedObject.transform.position = Animations.InitializeStartAnimationSettings(spawnedObject.GetComponent<PieceBehaviour>());
 			}
 
-			if (spawnedObject.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.Queen || spawnedObject.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.King)
+			if (spawnedObject.GetComponent<PieceBehaviour>().getPiece().GetType().Name == Constants.PieceClassNames.Queen || spawnedObject.GetComponent<PieceBehaviour>().getPiece().GetType().Name == Constants.PieceClassNames.King)
 			{
-				Animations.CorrectVerticalOffsets(spawnedObject.GetComponent<AbstractPiece>());
+				Animations.CorrectVerticalOffsets(spawnedObject.GetComponent<PieceBehaviour>());
 			}
 
-			if (isDebug || (spawnedObject.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.Pawn && !this.hasGameStarted()))
+			if (isDebug || (spawnedObject.GetComponent<PieceBehaviour>().getPiece().GetType().Name == Constants.PieceClassNames.Pawn && !this.hasGameStarted()))
 			{
 				// Pawns should start moving immediately
 				spawnedObject.GetComponent<PieceBehaviour>().isInAnimationState = true;
@@ -463,10 +497,10 @@ public class GameKeeper : MonoBehaviour {
 
 			if (isDebug)
 			{
-				float finalXPosition = GetTransformFromPosition(spawnedObject.GetComponent<AbstractPiece>().GetCurrentPosition()).x + Animations.HardcodedOffset(spawnedObject.GetComponent<AbstractPiece>()).x;
-				float finalYPosition = float.Parse(spawnedObject.GetComponent<MeshRenderer>().bounds.extents.y.ToString("0.00")) + Animations.HardcodedOffset(spawnedObject.GetComponent<AbstractPiece>()).y;
-				float finalZPosition = GetTransformFromPosition(spawnedObject.GetComponent<AbstractPiece>().GetCurrentPosition()).z + Animations.HardcodedOffset(spawnedObject.GetComponent<AbstractPiece>()).z;
-				spawnedObject.GetComponent<AbstractPiece>().gameObject.GetComponent<Transform>().position = new Vector3(finalXPosition, finalYPosition, finalZPosition);
+				float finalXPosition = GetTransformFromPosition(spawnedObject.GetComponent<PieceBehaviour>().getPiece().GetCurrentPosition()).x + Animations.HardcodedOffset(spawnedObject.GetComponent<PieceBehaviour>()).x;
+				float finalYPosition = float.Parse(spawnedObject.GetComponent<MeshRenderer>().bounds.extents.y.ToString("0.00")) + Animations.HardcodedOffset(spawnedObject.GetComponent<PieceBehaviour>()).y;
+				float finalZPosition = GetTransformFromPosition(spawnedObject.GetComponent<PieceBehaviour>().getPiece().GetCurrentPosition()).z + Animations.HardcodedOffset(spawnedObject.GetComponent<PieceBehaviour>()).z;
+				spawnedObject.GetComponent<Transform>().position = new Vector3(finalXPosition, finalYPosition, finalZPosition);
 			}
 		}
 	}
@@ -475,12 +509,11 @@ public class GameKeeper : MonoBehaviour {
 	{
 		// Assuming the object is a Queen
 
-		TrimName(spawnedObject.GetComponent<AbstractPiece>());
-		spawnedObject.GetComponent<AbstractPiece>().SetChessboard(this.chessBoard);
+		TrimName(spawnedObject.GetComponent<PieceBehaviour>());
 
-		spawnedObject.transform.position = Animations.InitializeStartAnimationSettings(spawnedObject.GetComponent<AbstractPiece>());
+		spawnedObject.transform.position = Animations.InitializeStartAnimationSettings(spawnedObject.GetComponent<PieceBehaviour>());
 
-		Animations.CorrectVerticalOffsets(spawnedObject.GetComponent<AbstractPiece>());
+		Animations.CorrectVerticalOffsets(spawnedObject.GetComponent<PieceBehaviour>());
 
 		spawnedObject.GetComponent<PieceBehaviour>().isInAnimationState = true;
 	}

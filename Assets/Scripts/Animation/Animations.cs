@@ -91,13 +91,13 @@ public class Animations {
 		gameLoopAudioSource.Play();
 	}
 
-	public static void AnimateMovement(AbstractPiece movingPiece)
+	public static void AnimateMovement(PieceBehaviour movingPiece)
 	{
 		GameKeeper gameKeeper = GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>();
 
-		float finalXPosition = gameKeeper.GetTransformFromPosition(movingPiece.GetCurrentPosition()).x + HardcodedOffset(movingPiece).x;
+		float finalXPosition = gameKeeper.GetTransformFromPosition(movingPiece.getPiece().GetCurrentPosition()).x + HardcodedOffset(movingPiece).x;
 		float finalYPosition = float.Parse(movingPiece.gameObject.GetComponent<MeshRenderer>().bounds.extents.y.ToString("0.00")) + HardcodedOffset(movingPiece).y;
-		float finalZPosition = gameKeeper.GetTransformFromPosition(movingPiece.GetCurrentPosition()).z + HardcodedOffset(movingPiece).z;
+		float finalZPosition = gameKeeper.GetTransformFromPosition(movingPiece.getPiece().GetCurrentPosition()).z + HardcodedOffset(movingPiece).z;
 
 		float lerpSpeed;
 		if (gameKeeper.hasGameStarted())
@@ -122,7 +122,7 @@ public class Animations {
 		Vector3 newLocation;
 		bool stillInMotion = false;
 
-		if (isSpaceship(movingPiece))
+		if (isSpaceship(movingPiece.getPiece()))
 		{
 			// Fly in, and then land
 			if (Mathf.Abs(currentLocation.x - finalXPosition) >= 0.01f || Mathf.Abs(currentLocation.z - finalZPosition) >= 0.01f)
@@ -165,7 +165,7 @@ public class Animations {
 			else if (Mathf.Abs(currentAlpha - targetAlpha) < 0.01f)
 			{
 				// This case is required to make the pieces opaque
-				if (movingPiece.side == Side.Black)
+				if (movingPiece.getPiece().side == Side.Black)
 				{
 					movingPiece.gameObject.GetComponent<MeshRenderer>().material = opaqueBlackMaterial;
 				}
@@ -180,7 +180,7 @@ public class Animations {
 		{
 			// Ready to roll
 			movingPiece.gameObject.GetComponent<PieceBehaviour>().isInAnimationState = false;
-			TriggerNextStartAnimation(movingPiece);
+			TriggerNextStartAnimation(movingPiece.getPiece());
 			if (gameKeeper.hasGameStarted())
 			{
 				ActionCamera actionCamera = GameObject.Find(Constants.ActionCameraObject).GetComponent<ActionCamera>();
@@ -189,7 +189,7 @@ public class Animations {
 					actionCamera.EnableMainCamera();
 				}
 
-				if (GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().chessBoard.CurrentMovingSide() == movingPiece.side)
+				if (GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().chessBoard.CurrentMovingSide() == movingPiece.getPiece().side)
 				{
 					EventManager.TriggerEvent(Constants.EventNames.NewPlayerTurn);
 				}
@@ -221,9 +221,9 @@ public class Animations {
 		}
 	}
 
-	public static void CorrectVerticalOffsets(AbstractPiece piece)
+	public static void CorrectVerticalOffsets(PieceBehaviour piece)
 	{
-		if (!isSpaceship(piece))
+		if (!isSpaceship(piece.getPiece()))
 		{
 			// The Kings and Queens don't have a fancy start animation to get their positions right, so we'll have to do so here
 			Vector3 currentPosition = piece.gameObject.GetComponent<Transform>().position;
@@ -233,47 +233,47 @@ public class Animations {
 		}
 	}
 
-	public static Vector3 HardcodedOffset(AbstractPiece piece)
+	public static Vector3 HardcodedOffset(PieceBehaviour piece)
 	{
 		// Some models are slightly displaced (yet to figure out how to fix this)
 		// For now, compute offsets for the Position to coordinate mapping so as to align the model with the square it's on
 
-		if (piece.GetType().Name == Constants.PieceClassNames.Pawn && piece.side == Side.White)
+		if (piece.getPiece().GetType().Name == Constants.PieceClassNames.Pawn && piece.getPiece().side == Side.White)
 		{
 			// X-wing is displaced on the x-axis by about a 1/8 square
 			return new Vector3(GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().GetSquareSpacing() / 8, 0, 0);
 		}
-		else if (piece.GetType().Name == Constants.PieceClassNames.Knight && piece.side == Side.Black)
+		else if (piece.getPiece().GetType().Name == Constants.PieceClassNames.Knight && piece.getPiece().side == Side.Black)
 		{
 			// Slave-1 is displaced on the x-axis by about a 1/8 square
 			return new Vector3(GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().GetSquareSpacing() / 8, 0, 0);
 		}
-		else if (piece.GetType().Name == Constants.PieceClassNames.Bishop && piece.side == Side.White)
+		else if (piece.getPiece().GetType().Name == Constants.PieceClassNames.Bishop && piece.getPiece().side == Side.White)
 		{
 			// Y-wing is displaced on the z-axis by about a quarter square
 			return new Vector3(0, 0, -GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().GetSquareSpacing() / 4);
 		}
-		else if (piece.GetType().Name == Constants.PieceClassNames.Rook && piece.side == Side.White)
+		else if (piece.getPiece().GetType().Name == Constants.PieceClassNames.Rook && piece.getPiece().side == Side.White)
 		{
 			// CR-90 Corvette is displaced on the x-axis by about a 1/16 square
 			return new Vector3(GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().GetSquareSpacing() / 16, 0, 0);
 		}
-		else if (piece.GetType().Name == Constants.PieceClassNames.Queen && piece.side == Side.Black)
+		else if (piece.getPiece().GetType().Name == Constants.PieceClassNames.Queen && piece.getPiece().side == Side.Black)
 		{
 			// Darth Vader is displaced on the y-axis by a certain amount
 			return new Vector3(0, 0.8f - piece.gameObject.GetComponent<Transform>().position.y, 0);
 		}
-		else if (piece.GetType().Name == Constants.PieceClassNames.Queen && piece.side == Side.White)
+		else if (piece.getPiece().GetType().Name == Constants.PieceClassNames.Queen && piece.getPiece().side == Side.White)
 		{
 			// Princess Leia is displaced on the y-axis by a certain amount
 			return new Vector3(0, 1.0f - piece.gameObject.GetComponent<Transform>().position.y, 0);
 		}
-		else if (piece.GetType().Name == Constants.PieceClassNames.King && piece.side == Side.Black)
+		else if (piece.getPiece().GetType().Name == Constants.PieceClassNames.King && piece.getPiece().side == Side.Black)
 		{
 			// Darth Sidious is displaced on the y-axis by a certain amount
 			return new Vector3(0, 1.35f - piece.gameObject.GetComponent<Transform>().position.y, 0);
 		}
-		else if (piece.GetType().Name == Constants.PieceClassNames.King && piece.side == Side.White)
+		else if (piece.getPiece().GetType().Name == Constants.PieceClassNames.King && piece.getPiece().side == Side.White)
 		{
 			// Luke Skywalker is displaced on the y-axis by a certain amount
 			return new Vector3(0, 1.3f - piece.gameObject.GetComponent<Transform>().position.y, 0);
@@ -306,18 +306,18 @@ public class Animations {
 		}
 	}
 
-	public static Vector3 InitializeStartAnimationSettings(AbstractPiece piece)
+	public static Vector3 InitializeStartAnimationSettings(PieceBehaviour piece)
 	{
 		// Also take the liberty of initializing our shaders here, as their utility is somewhat related to the initial animation...
 
 		// Initially, aircraft will be off the board and at a higher elevation than that of the board
 		if (!GameKeeper.isDebug)
 		{
-			if (isSpaceship(piece))
+			if (isSpaceship(piece.getPiece()))
 			{
 				Vector3 initialTransform = piece.gameObject.GetComponent<Transform>().position;
 				int multiplier;
-				if (piece.side == Side.Black)
+				if (piece.getPiece().side == Side.Black)
 				{
 					multiplier = 1;
 
@@ -336,7 +336,7 @@ public class Animations {
 			{
 				// Assuming each King/Queen mesh has only one shader since they don't need glass
 				Material meshMaterial = piece.gameObject.GetComponent<MeshRenderer>().material;
-				if (piece.side == Side.Black)
+				if (piece.getPiece().side == Side.Black)
 				{
 					// The core piece models are given a fade shader
 					fadeBlackMaterial = meshMaterial;

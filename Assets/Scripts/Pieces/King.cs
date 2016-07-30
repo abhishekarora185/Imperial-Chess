@@ -6,6 +6,11 @@ public class King : AbstractPiece
 
 	public bool canCastle;
 
+	public King()
+	{
+		this.InitializationActions();
+	}
+
 	public King(Position position)
 	{
 		this.InitializationActions();
@@ -160,7 +165,7 @@ public class King : AbstractPiece
 		return kingToCopy;
 	}
 
-	private void InitializationActions()
+	protected override void InitializationActions()
 	{
 		this.ComputeMoves();
 		this.canCastle = true;

@@ -3,6 +3,10 @@ using UnityEngine;
 
 public class Queen : AbstractPiece
 {
+	public Queen()
+	{
+		this.InitializationActions();
+	}
 
 	public Queen(Position position)
 	{
@@ -114,7 +118,7 @@ public class Queen : AbstractPiece
 		return movesForCurrentPosition;
 	}
 
-	private void InitializationActions()
+	protected override void InitializationActions()
 	{
 		this.ComputeMoves();
 	}

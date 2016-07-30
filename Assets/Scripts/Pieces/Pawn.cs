@@ -7,6 +7,11 @@ public class Pawn : AbstractPiece {
 
 	private Position initialPosition;
 
+	public Pawn()
+	{
+		this.allowEnPassantCapture = false;
+	}
+
 	public Pawn(Position position)
 	{
 		this.SetCurrentPosition(position);
@@ -23,6 +28,13 @@ public class Pawn : AbstractPiece {
 	void Update()
 	{
 
+	}
+
+	public void initializePawn(Position position)
+	{
+		// Since pawns' moves are direction-dependent, the moves should be computed only after the side is set
+		this.initialPosition = position;
+		this.ComputeMoves();
 	}
 
 	public override void PostMoveActions()
@@ -58,28 +70,11 @@ public class Pawn : AbstractPiece {
 		if (this.side == Side.Black && this.GetCurrentPosition().GetRow() == Position.min ||
 			this.side == Side.White && this.GetCurrentPosition().GetRow() == Position.max)
 		{
-			// TODO: Figure out how do this the GameObject-unaware way by directly adding a Queen object to this object's chessboard
-			this.TryPromoteGameObjectPawn();
-		}
-	}
+			Queen spawnedQueen = new Queen(this.currentPosition);
+			spawnedQueen.side = this.side;
+			spawnedQueen.SetChessboard(this.chessBoard);
 
-	public void TryPromoteGameObjectPawn()
-	{
-		// Inconsistent code where the piece is aware of GameObjects
-		if (this.gameObject != null)
-		{
-			if (this.side == Side.Black && this.GetCurrentPosition().GetRow() == Position.min)
-			{
-				// Pawn promotion
-				GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().SpawnPromotedPiece(Constants.PieceCodes.BlackQueen, this.GetCurrentPosition());
-				Destroy(this.gameObject);
-			}
-			else if (this.side == Side.White && this.GetCurrentPosition().GetRow() == Position.max)
-			{
-				// Pawn promotion
-				GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().SpawnPromotedPiece(Constants.PieceCodes.WhiteQueen, this.GetCurrentPosition());
-				Destroy(this.gameObject);
-			}
+			this.chessBoard.AddPiece(spawnedQueen);
 		}
 	}
 
@@ -172,8 +167,8 @@ public class Pawn : AbstractPiece {
 			sideToCheck = Side.Black;
 		}
 
-		Bitboard friendlyLocations = GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().chessBoard.GetPieceLocations(this.side);
-		Bitboard opponentLocations = GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().chessBoard.GetPieceLocations(sideToCheck);
+		Bitboard friendlyLocations = this.chessBoard.GetPieceLocations(this.side);
+		Bitboard opponentLocations = this.chessBoard.GetPieceLocations(sideToCheck);
 
 		// First, remove any moves that go through friendly or opponent
 		movesForCurrentPosition = movesForCurrentPosition.ComputeRayIntersections(friendlyLocations, this.GetCurrentPosition(), false);
@@ -202,7 +197,7 @@ public class Pawn : AbstractPiece {
 			if (opponentLocations.ValueAtPosition(new Position(this.GetCurrentPosition().GetColumn() - 1, rowToCheck)) > 0)
 			{
 				// Also check if the piece at this location is a pawn which has just performed a double jump
-				AbstractPiece passedPiece = GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().chessBoard.GetPieceAtPosition(new Position(this.GetCurrentPosition().GetColumn() - 1, rowToCheck));
+				AbstractPiece passedPiece = this.chessBoard.GetPieceAtPosition(new Position(this.GetCurrentPosition().GetColumn() - 1, rowToCheck));
 				if (passedPiece.GetType().Name.CompareTo(this.GetType().Name) == 0 && ((Pawn)passedPiece).allowEnPassantCapture)
 				{
 					int attackPoint = rowToCheck;
@@ -222,7 +217,7 @@ public class Pawn : AbstractPiece {
 		{
 			if (opponentLocations.ValueAtPosition(new Position(this.GetCurrentPosition().GetColumn() + 1, rowToCheck)) > 0)
 			{
-				AbstractPiece passedPiece = GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().chessBoard.GetPieceAtPosition(new Position(this.GetCurrentPosition().GetColumn() + 1, rowToCheck));
+				AbstractPiece passedPiece = this.chessBoard.GetPieceAtPosition(new Position(this.GetCurrentPosition().GetColumn() + 1, rowToCheck));
 				if (passedPiece != null && passedPiece.GetType().Name.CompareTo(this.GetType().Name) == 0 && ((Pawn)passedPiece).allowEnPassantCapture)
 				{
 					int attackPoint = rowToCheck;
@@ -254,7 +249,7 @@ public class Pawn : AbstractPiece {
 		return pawnToCopy;
 	}
 
-	private void InitializationActions()
+	protected override void InitializationActions()
 	{
 		this.ComputeMoves();
 		this.allowEnPassantCapture = false;

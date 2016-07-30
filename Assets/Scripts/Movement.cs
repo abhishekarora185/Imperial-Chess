@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// A type to represent a position on a chessboard
 public class Position : IEquatable<Position>
 {
 	private int row;
@@ -59,6 +60,7 @@ public class Position : IEquatable<Position>
 	}
 }
 
+// A type to represent a move, including its value, for an AI's decision making flow, on a Chessboard
 public class Move
 {
 	private Position toPosition;
@@ -94,25 +96,34 @@ public class Move
 	}
 }
 
+// A static method class that handles movements of pieces and special cases for the same
 public class MoveActions
 {
 	public static void standardMoveActions(Move move)
 	{
 		TryPlayDeathAnimation(move);
 
-		if (move.getPiece().GetType().Name == Constants.PieceClassNames.Pawn)
-		{
-			TryAnimateEnPassantCapture(move);
-		}
-
 		if (move.getPiece().GetType().Name == Constants.PieceClassNames.King)
 		{
 			TryAnimateRookCastling(move);
 		}
 
+		if (move.getPiece().GetType().Name == Constants.PieceClassNames.Pawn)
+		{
+			TryAnimateEnPassantCapture(move);
+		}
+
+		Position oldPosition = move.getPiece().GetCurrentPosition();
+
 		GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().chessBoard.MoveTo(move.getPiece(), move.getPosition());
-		move.getPiece().gameObject.GetComponent<PieceBehaviour>().isInAnimationState = true;
-		move.getPiece().PostMoveActions();
+
+		if (move.getPiece().GetType().Name == Constants.PieceClassNames.Pawn)
+		{
+			// Pawn Promotion will require move post-processing to happen before the animation is done
+			TryAnimatePawnPromotion(move, oldPosition);
+		}
+
+		GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().GetGameObjectFromPiece(move.getPiece()).GetComponent<PieceBehaviour>().isInAnimationState = true;
 	}
 
 	private static void TryPlayDeathAnimation(Move move)
@@ -123,7 +134,7 @@ public class MoveActions
 		// Switch to action cam for some awesomeness
 		{
 			GameObject.Find(Constants.ActionCameraObject).GetComponent<ActionCamera>().EnableActionCamera(move.getPiece(), pieceAtMovePosition);
-			GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().DestroyPiece(pieceAtMovePosition);
+			GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().DestroyPiece(GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().GetGameObjectFromPiece(pieceAtMovePosition).GetComponent<PieceBehaviour>());
 		}
 	}
 
@@ -151,7 +162,26 @@ public class MoveActions
 		if (dyingPawn != null)
 		{
 			GameObject.Find(Constants.ActionCameraObject).GetComponent<ActionCamera>().EnableActionCamera(move.getPiece(), dyingPawn);
-			GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().DestroyPiece(dyingPawn);
+			GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().DestroyPiece(GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().GetGameObjectFromPiece(dyingPawn).GetComponent<PieceBehaviour>());
+		}
+	}
+
+	private static void TryAnimatePawnPromotion(Move move, Position oldPosition)
+	{
+		if (move.getPiece().side == Side.Black && move.getPosition().GetRow() == Position.min)
+		{
+			// Pawn promotion
+			GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().SpawnPromotedPiece(Constants.PieceCodes.BlackQueen, move.getPiece().GetCurrentPosition());
+			GameObject.Destroy(GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().GetGameObjectFromPiece(move.getPiece()));
+		}
+		else if (move.getPiece().side == Side.White && move.getPosition().GetRow() == Position.max)
+		{
+			// Hack right now to pass the old position to the action camera
+			move.getPiece().SetCurrentPosition(oldPosition);
+
+			// Pawn promotion
+			GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().SpawnPromotedPiece(Constants.PieceCodes.WhiteQueen, move.getPiece().GetCurrentPosition());
+			GameObject.Destroy(GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().GetGameObjectFromPiece(move.getPiece()));
 		}
 	}
 
@@ -168,7 +198,7 @@ public class MoveActions
 
 				foreach (GameObject piece in GameObject.FindGameObjectsWithTag(Constants.PieceTag))
 				{
-					if (piece.GetComponent<AbstractPiece>().side == move.getPiece().side && piece.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.Rook && piece.GetComponent<AbstractPiece>().GetCurrentPosition().GetColumn() < move.getPosition().GetColumn())
+					if (piece.GetComponent<PieceBehaviour>().getPiece().side == move.getPiece().side && piece.GetComponent<PieceBehaviour>().getPiece().GetType().Name == Constants.PieceClassNames.Rook && piece.GetComponent<PieceBehaviour>().getPiece().GetCurrentPosition().GetColumn() < move.getPosition().GetColumn())
 					{
 						rookGameObject = piece;
 						break;
@@ -186,7 +216,7 @@ public class MoveActions
 
 				foreach (GameObject piece in GameObject.FindGameObjectsWithTag(Constants.PieceTag))
 				{
-					if (piece.GetComponent<AbstractPiece>().side == move.getPiece().side && piece.GetComponent<AbstractPiece>().GetType().Name == Constants.PieceClassNames.Rook && piece.GetComponent<AbstractPiece>().GetCurrentPosition().GetColumn() > move.getPosition().GetColumn())
+					if (piece.GetComponent<PieceBehaviour>().getPiece().side == move.getPiece().side && piece.GetComponent<PieceBehaviour>().getPiece().GetType().Name == Constants.PieceClassNames.Rook && piece.GetComponent<PieceBehaviour>().getPiece().GetCurrentPosition().GetColumn() > move.getPosition().GetColumn())
 					{
 						rookGameObject = piece;
 						break;

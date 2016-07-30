@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 public class PieceBehaviour : MonoBehaviour {
 
 	public bool isInAnimationState;
+
+	private AbstractPiece piece;
 
 	// Use this for initialization
 	void Start () {
@@ -14,28 +17,41 @@ public class PieceBehaviour : MonoBehaviour {
 	void Update () {
 		if (this.isInAnimationState)
 		{
-			Animations.AnimateMovement(this.gameObject.GetComponent<AbstractPiece>());
+			Animations.AnimateMovement(this);
 		}
 	}
 
 	void OnMouseDown()
 	{
-		// This assumes (everywhere) that each game object that has this script attached also has an AbstractPiece script attached
-
-		if (!GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().isSideControlledByAI(this.gameObject.GetComponent<AbstractPiece>().side) &&
+		if (!GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().isSideControlledByAI(this.getPiece().side) &&
 			GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().hasGameStarted()
-			&& GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().chessBoard.CurrentMovingSide() == this.gameObject.GetComponent<AbstractPiece>().side)
+			&& GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().chessBoard.CurrentMovingSide() == this.getPiece().side)
 		{
-			Bitboard moveBitboard = this.gameObject.GetComponent<AbstractPiece>().GetSafeMovesForCurrentPosition();
+			Bitboard moveBitboard = this.getPiece().GetSafeMovesForCurrentPosition();
 
 			GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().ClearTiles();
 
 			foreach (Position movePosition in moveBitboard.GetPositions())
 			{
-				GameObject moveTile = Instantiate(GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().GetMoveIcon(this.gameObject.GetComponent<AbstractPiece>().side));
-				moveTile.GetComponent<MoveIcon>().SetMovingPiece(this.gameObject.GetComponent<AbstractPiece>());
+				GameObject moveTile = Instantiate(GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().GetMoveIcon(this.getPiece().side));
+				moveTile.GetComponent<MoveIcon>().SetMovingPiece(this.getPiece());
 				moveTile.GetComponent<MoveIcon>().SetMovePosition(movePosition);
 			}
 		}
+	}
+
+	public void setPiece(Type type)
+	{
+		this.piece = (AbstractPiece) Activator.CreateInstance(type);
+	}
+
+	public void setPiece(AbstractPiece piece)
+	{
+		this.piece = piece;
+	}
+
+	public AbstractPiece getPiece()
+	{
+		return this.piece;
 	}
 }

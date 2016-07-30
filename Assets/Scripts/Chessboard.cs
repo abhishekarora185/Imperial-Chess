@@ -3,8 +3,6 @@ using System.Collections.Generic;
 
 public class Chessboard {
 
-	public GameObject pieceHolderGameObject;
-
 	private Bitboard blackPieceLocations;
 
 	private Bitboard whitePieceLocations;
@@ -18,15 +16,6 @@ public class Chessboard {
 		this.whitePieceLocations = new Bitboard();
 		this.movingSide = Side.Black;
 		this.activePieces = new List<AbstractPiece>();
-	}
-
-	public Chessboard(GameObject pieceHolderGameObject)
-	{
-		this.blackPieceLocations = new Bitboard();
-		this.whitePieceLocations = new Bitboard();
-		this.movingSide = Side.Black;
-		this.activePieces = new List<AbstractPiece>();
-		this.pieceHolderGameObject = pieceHolderGameObject;
 	}
 
 	public Side CurrentMovingSide()
@@ -80,6 +69,8 @@ public class Chessboard {
 
 		// Now, actually move the piece
 		piece.SetCurrentPosition(position);
+
+		piece.PostMoveActions();
 	}
 
 	public Bitboard GetPieceLocations(Side side)
@@ -240,11 +231,7 @@ public class Chessboard {
 
 	public static Chessboard MakeCopyOfChessboard(Chessboard chessboardToCopy)
 	{
-		// It's the responsibility of whoever creates this to clean up their mess
-		GameObject pieceHolder = new GameObject();
-		pieceHolder.tag = Constants.PieceHolderTag;
-
-		Chessboard newChessboard = new Chessboard(pieceHolder);
+		Chessboard newChessboard = new Chessboard();
 		newChessboard.blackPieceLocations = new Bitboard();
 		newChessboard.whitePieceLocations = new Bitboard();
 		newChessboard.blackPieceLocations = chessboardToCopy.blackPieceLocations.IntersectBitboard(newChessboard.blackPieceLocations);
@@ -258,27 +245,27 @@ public class Chessboard {
 
 			if (pieceType == typeof(Pawn))
 			{
-				newPiece = pieceHolder.AddComponent<Pawn>();
+				newPiece = new Pawn(piece.GetCurrentPosition());
 			}
 			else if (pieceType == typeof(Rook))
 			{
-				newPiece = pieceHolder.AddComponent<Rook>();
+				newPiece = new Rook(piece.GetCurrentPosition());
 			}
 			else if (pieceType == typeof(Bishop))
 			{
-				newPiece = pieceHolder.AddComponent<Bishop>();
+				newPiece = new Bishop(piece.GetCurrentPosition());
 			}
 			else if (pieceType == typeof(Knight))
 			{
-				newPiece = pieceHolder.AddComponent<Knight>();
+				newPiece = new Knight(piece.GetCurrentPosition());
 			}
 			else if (pieceType == typeof(Queen))
 			{
-				newPiece = pieceHolder.AddComponent<Queen>();
+				newPiece = new Queen(piece.GetCurrentPosition());
 			}
 			else if (pieceType == typeof(King))
 			{
-				newPiece = pieceHolder.AddComponent<King>();
+				newPiece = new King(piece.GetCurrentPosition());
 			}
 
 			if (newPiece != null)
