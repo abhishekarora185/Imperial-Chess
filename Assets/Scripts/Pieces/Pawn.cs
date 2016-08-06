@@ -198,7 +198,7 @@ public class Pawn : AbstractPiece {
 			{
 				// Also check if the piece at this location is a pawn which has just performed a double jump
 				AbstractPiece passedPiece = this.chessBoard.GetPieceAtPosition(new Position(this.GetCurrentPosition().GetColumn() - 1, rowToCheck));
-				if (passedPiece.GetType().Name.CompareTo(this.GetType().Name) == 0 && ((Pawn)passedPiece).allowEnPassantCapture)
+				if (passedPiece != null && passedPiece.GetType().Name.CompareTo(this.GetType().Name) == 0 && ((Pawn)passedPiece).allowEnPassantCapture)
 				{
 					int attackPoint = rowToCheck;
 					if (this.side == Side.Black)

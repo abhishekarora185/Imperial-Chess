@@ -160,7 +160,7 @@ public class Chessboard {
 		}
 	}
 
-	public List<AbstractPiece> GetPiecesByTypeAndSide(System.Type type, Side side)
+	public List<AbstractPiece> GetPiecesOfTypeAndSide(System.Type type, Side side)
 	{
 		List<AbstractPiece> foundPieces = new List<AbstractPiece>();
 
@@ -181,7 +181,7 @@ public class Chessboard {
 		bool inCheck = false;
 
 		// Common sense dictates that there must be one and only one king on either side
-		King kingToCheck = (King)GetPiecesByTypeAndSide(typeof(King), sideToCheck).ToArray()[0];
+		King kingToCheck = (King)GetPiecesOfTypeAndSide(typeof(King), sideToCheck).ToArray()[0];
 
 		foreach (AbstractPiece activePiece in this.activePieces)
 		{

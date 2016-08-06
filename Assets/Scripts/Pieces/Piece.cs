@@ -26,6 +26,11 @@ public abstract class AbstractPiece
 		this.currentPosition = position;
 	}
 
+	public Chessboard GetChessboard()
+	{
+		return this.chessBoard;
+	}
+
 	public void SetChessboard(Chessboard chessBoard)
 	{
 		this.chessBoard = chessBoard;

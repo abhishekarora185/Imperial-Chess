@@ -73,6 +73,7 @@ public class Move
 	{
 		this.pieceToMove = pieceToMove;
 		this.toPosition = moveToPosition;
+		this.score = 0;
 	}
 
 	public Position getPosition()

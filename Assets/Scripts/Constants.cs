@@ -77,6 +77,8 @@ public class Constants
 		public static string PieceSpawned = "piecespawned";
 
 		public static string NewPlayerTurn = "newplayerturn";
+
+		public static string AIComputationDone = "aicomputationdone";
 	}
 
 	public class TextGameObjectNames
@@ -109,6 +111,13 @@ public class Constants
 		public static string ImperialMarch = "Imperial_March";
 
 		public static string Explosion = "Explosion";
+	}
+
+	public class AI
+	{
+		public static int maxAllowedDepth = 2;
+
+		public static int maxAllowedMovesAtHighestLevel = 10;
 	}
 
 	public static string MainCameraObject = "Main Camera";
