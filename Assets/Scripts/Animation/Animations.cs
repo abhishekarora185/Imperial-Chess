@@ -12,7 +12,9 @@ public class Animations {
 	public static void PlayOpeningCrawl()
 	{
 		GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().StartCoroutine(ALongTimeAgo());
-		GameObject.Find(Constants.VictoryText).GetComponent<TextMesh>().text = string.Empty;
+		GameObject.Find(Constants.VictoryText).GetComponent<MeshRenderer>().enabled = false;
+		GameObject.Find(Constants.RestartText).GetComponent<MeshRenderer>().enabled = false;
+		GameObject.Find(Constants.RestartText).GetComponent<BoxCollider>().enabled = false;
 	}
 
 	public static IEnumerator ALongTimeAgo()

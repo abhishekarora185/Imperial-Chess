@@ -437,7 +437,9 @@ public class GameKeeper : MonoBehaviour {
 					Instantiate(this.blackTurnIcon);
 					GameObject.Find(Constants.ActionCameraObject).GetComponent<ActionCamera>().deathAudioSource.clip = (AudioClip)Resources.Load(Constants.AudioClipNames.AudioDirectory + Constants.AudioClipNames.ImperialMarch, typeof(AudioClip));
 				}
-				GameObject.Find(Constants.VictoryText).GetComponent<TextMesh>().text = Constants.VictoryText;
+				GameObject.Find(Constants.VictoryText).GetComponent<MeshRenderer>().enabled = true;
+				GameObject.Find(Constants.RestartText).GetComponent<MeshRenderer>().enabled = true;
+				GameObject.Find(Constants.RestartText).GetComponent<BoxCollider>().enabled = true;
 				GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<AudioSource>().Stop();
 				GameObject.Find(Constants.ActionCameraObject).GetComponent<ActionCamera>().deathAudioSource.Play();
 			}
