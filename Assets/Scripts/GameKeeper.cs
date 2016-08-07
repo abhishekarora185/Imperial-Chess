@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Threading;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class GameKeeper : MonoBehaviour {
 
@@ -437,9 +438,12 @@ public class GameKeeper : MonoBehaviour {
 					Instantiate(this.blackTurnIcon);
 					GameObject.Find(Constants.ActionCameraObject).GetComponent<ActionCamera>().deathAudioSource.clip = (AudioClip)Resources.Load(Constants.AudioClipNames.AudioDirectory + Constants.AudioClipNames.ImperialMarch, typeof(AudioClip));
 				}
-				GameObject.Find(Constants.VictoryText).GetComponent<MeshRenderer>().enabled = true;
-				GameObject.Find(Constants.RestartText).GetComponent<MeshRenderer>().enabled = true;
-				GameObject.Find(Constants.RestartText).GetComponent<BoxCollider>().enabled = true;
+				GameObject.Find(Constants.VictoryText).GetComponent<Text>().enabled = true;
+				GameObject.Find(Constants.RestartText).GetComponent<Text>().enabled = true;
+				GameObject.Find(Constants.RestartText).GetComponent<Button>().onClick.AddListener(() => {
+					Application.LoadLevel(Application.loadedLevel);
+				});
+
 				GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<AudioSource>().Stop();
 				GameObject.Find(Constants.ActionCameraObject).GetComponent<ActionCamera>().deathAudioSource.Play();
 			}

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class Animations {
 
@@ -12,9 +13,12 @@ public class Animations {
 	public static void PlayOpeningCrawl()
 	{
 		GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().StartCoroutine(ALongTimeAgo());
-		GameObject.Find(Constants.VictoryText).GetComponent<MeshRenderer>().enabled = false;
-		GameObject.Find(Constants.RestartText).GetComponent<MeshRenderer>().enabled = false;
-		GameObject.Find(Constants.RestartText).GetComponent<BoxCollider>().enabled = false;
+		GameObject.Find(Constants.VictoryText).GetComponent<Text>().enabled = false;
+		GameObject.Find(Constants.RestartText).GetComponent<Text>().enabled = false;
+		GameObject.Find(Constants.QuitText).GetComponent<Text>().enabled = false;
+		GameObject.Find(Constants.SureText).GetComponent<Text>().enabled = false;
+		GameObject.Find(Constants.YesText).GetComponent<Text>().enabled = false;
+		GameObject.Find(Constants.NoText).GetComponent<Text>().enabled = false;
 	}
 
 	public static IEnumerator ALongTimeAgo()
@@ -355,5 +359,23 @@ public class Animations {
 		{
 			return piece.gameObject.GetComponent<Transform>().position;
 		}
+	}
+
+	public static void DisplayQuitMessage()
+	{
+		Time.timeScale = 0.0f;
+		GameObject.Find(Constants.SureText).GetComponent<Text>().enabled = true;
+		GameObject.Find(Constants.YesText).GetComponent<Text>().enabled = true;
+		GameObject.Find(Constants.NoText).GetComponent<Text>().enabled = true;
+
+		GameObject.Find(Constants.YesText).GetComponent<Button>().onClick.AddListener(() => {
+			Application.Quit();
+		});
+		GameObject.Find(Constants.NoText).GetComponent<Button>().onClick.AddListener(() => {
+			GameObject.Find(Constants.SureText).GetComponent<Text>().enabled = false;
+			GameObject.Find(Constants.YesText).GetComponent<Text>().enabled = false;
+			GameObject.Find(Constants.NoText).GetComponent<Text>().enabled = false;
+			Time.timeScale = 1.0f;
+		});
 	}
 }

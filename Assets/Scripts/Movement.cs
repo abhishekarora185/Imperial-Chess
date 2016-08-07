@@ -114,8 +114,6 @@ public class MoveActions
 			TryAnimateEnPassantCapture(move);
 		}
 
-		Position oldPosition = move.getPiece().GetCurrentPosition();
-
 		GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().chessBoard.MoveTo(move.getPiece(), move.getPosition());
 
 		if (move.getPiece().GetType() == typeof(Pawn))

@@ -47,6 +47,13 @@ public class OpeningCrawl : MonoBehaviour {
 			{
 				this.gameObject.GetComponent<AudioSource>().Stop();
 			}
+
+			// Allow user to quit at this point
+			GameObject.Find(Constants.QuitText).GetComponent<UnityEngine.UI.Text>().enabled = true;
+			GameObject.Find(Constants.QuitText).GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => {
+				Animations.DisplayQuitMessage();
+			});
+
 			Animations.RotateCameraToChessboard(this.GetTargetRotationAngle(), this.revealBoardClipStarted);
 			this.revealBoardClipStarted = true;
 		}

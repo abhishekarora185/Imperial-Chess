@@ -113,7 +113,10 @@ public class Constants
 	public static string PieceHolderTag = "PieceHolder";
 	public static string VictoryText = "Victory";
 	public static string RestartText = "Restart";
-
+	public static string QuitText = "Quit";
+	public static string SureText = "Sure";
+	public static string YesText = "Yes";
+	public static string NoText = "No";
 }
 
 public enum Side
