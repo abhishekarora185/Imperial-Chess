@@ -104,12 +104,12 @@ public class MoveActions
 	{
 		TryPlayDeathAnimation(move);
 
-		if (move.getPiece().GetType().Name == Constants.PieceClassNames.King)
+		if (move.getPiece().GetType() == typeof(King))
 		{
 			TryAnimateRookCastling(move);
 		}
 
-		if (move.getPiece().GetType().Name == Constants.PieceClassNames.Pawn)
+		if (move.getPiece().GetType() == typeof(Pawn))
 		{
 			TryAnimateEnPassantCapture(move);
 		}
@@ -118,10 +118,10 @@ public class MoveActions
 
 		GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().chessBoard.MoveTo(move.getPiece(), move.getPosition());
 
-		if (move.getPiece().GetType().Name == Constants.PieceClassNames.Pawn)
+		if (move.getPiece().GetType() == typeof(Pawn))
 		{
 			// Pawn Promotion will require move post-processing to happen before the animation is done
-			TryAnimatePawnPromotion(move, oldPosition);
+			TryAnimatePawnPromotion(move);
 		}
 
 		GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().GetGameObjectFromPiece(move.getPiece()).GetComponent<PieceBehaviour>().isInAnimationState = true;
@@ -167,19 +167,16 @@ public class MoveActions
 		}
 	}
 
-	private static void TryAnimatePawnPromotion(Move move, Position oldPosition)
+	private static void TryAnimatePawnPromotion(Move move)
 	{
 		if (move.getPiece().side == Side.Black && move.getPosition().GetRow() == Position.min)
 		{
-			move.getPiece().SetCurrentPosition(oldPosition);
 			// Pawn promotion
 			GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().SpawnPromotedPiece(Constants.PieceCodes.BlackQueen, move.getPiece().GetCurrentPosition());
 			GameObject.Destroy(GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().GetGameObjectFromPiece(move.getPiece()));
 		}
 		else if (move.getPiece().side == Side.White && move.getPosition().GetRow() == Position.max)
 		{
-			move.getPiece().SetCurrentPosition(oldPosition);
-
 			// Pawn promotion
 			GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().SpawnPromotedPiece(Constants.PieceCodes.WhiteQueen, move.getPiece().GetCurrentPosition());
 			GameObject.Destroy(GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().GetGameObjectFromPiece(move.getPiece()));

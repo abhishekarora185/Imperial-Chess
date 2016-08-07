@@ -303,20 +303,20 @@ public class GameKeeper : MonoBehaviour {
 		arrangement[new Position(8, 1)] = Constants.PieceCodes.WhiteRook;
 
 		// Black Knights
-		arrangement[new Position(2, 8)] = Constants.PieceCodes.BlackKnight;
-		arrangement[new Position(7, 8)] = Constants.PieceCodes.BlackKnight;
+		//arrangement[new Position(2, 8)] = Constants.PieceCodes.BlackKnight;
+		//arrangement[new Position(7, 8)] = Constants.PieceCodes.BlackKnight;
 
 		//White Knights
-		arrangement[new Position(2, 1)] = Constants.PieceCodes.WhiteKnight;
-		arrangement[new Position(7, 1)] = Constants.PieceCodes.WhiteKnight;
+		//arrangement[new Position(2, 1)] = Constants.PieceCodes.WhiteKnight;
+		//arrangement[new Position(7, 1)] = Constants.PieceCodes.WhiteKnight;
 
 		// Black Bishops
-		arrangement[new Position(3, 8)] = Constants.PieceCodes.BlackBishop;
-		arrangement[new Position(6, 8)] = Constants.PieceCodes.BlackBishop;
+		//arrangement[new Position(3, 8)] = Constants.PieceCodes.BlackBishop;
+		//arrangement[new Position(6, 8)] = Constants.PieceCodes.BlackBishop;
 
 		//White Bishops
-		arrangement[new Position(3, 1)] = Constants.PieceCodes.WhiteBishop;
-		arrangement[new Position(6, 1)] = Constants.PieceCodes.WhiteBishop;
+		//arrangement[new Position(3, 1)] = Constants.PieceCodes.WhiteBishop;
+		//arrangement[new Position(6, 1)] = Constants.PieceCodes.WhiteBishop;
 
 		// Kings & Queens
 		arrangement[new Position(4, 8)] = Constants.PieceCodes.BlackKing;
@@ -391,7 +391,7 @@ public class GameKeeper : MonoBehaviour {
 					}
 				}
 
-				EventManager.StopListening(Constants.EventNames.BishopsLanded);
+				EventManager.StopListening(Constants.EventNames.RooksLanded);
 			}
 		});
 
