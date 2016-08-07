@@ -77,8 +77,6 @@ public class Constants
 		public static string PieceSpawned = "piecespawned";
 
 		public static string NewPlayerTurn = "newplayerturn";
-
-		public static string AIComputationDone = "aicomputationdone";
 	}
 
 	public class TextGameObjectNames
@@ -88,12 +86,6 @@ public class Constants
 		public static string StarWarsLogo = "Star Wars Logo";
 
 		public static string OpeningCrawl = "Opening Crawl";
-
-		public static string GameModeSelection = "Game Mode Selection";
-
-		public static string SinglePlayerMode = "Single";
-
-		public static string MultiPlayerMode = "Multi";
 	}
 
 	public class AudioClipNames
@@ -111,13 +103,6 @@ public class Constants
 		public static string ImperialMarch = "Imperial_March";
 
 		public static string Explosion = "Explosion";
-	}
-
-	public class AI
-	{
-		public static int maxAllowedDepth = 2;
-
-		public static int maxAllowedMovesAtHighestLevel = 10;
 	}
 
 	public static string MainCameraObject = "Main Camera";

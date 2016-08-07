@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class GameKeeper : MonoBehaviour {
 
-	public static bool isDebug = true;
+	public static bool isDebug = false;
 
 	public GameObject[] prefabs;
 
@@ -31,35 +31,17 @@ public class GameKeeper : MonoBehaviour {
 	// Position to coordinate mapping
 	private Dictionary<Position, Vector3> squares;
 
-	private Dictionary<Side, bool> isAIControllingSide;
-
-	private Dictionary<Side, AI> AIBySide;
-
 	// Use this for initialization
 	void Start () {
-
+		this.InitializeGamekeeper();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		// Poll the AI for a move if AI computation is being done
-		if (this.gameStarted && this.isSideControlledByAI(this.chessBoard.CurrentMovingSide()))
-		{
-			if (this.AIBySide[this.chessBoard.CurrentMovingSide()].isAIComputationDone())
-			{
-				Debug.Log("Computation End Time: " + Time.time);
-				this.AIBySide[this.chessBoard.CurrentMovingSide()].PostAIComputation();
-			}
-		}
+
 	}
 
-	void OnApplicationQuit()
-	{
-		// Shut down all AI threads
-		AI.terminateAllThreads = true;
-	}
-
-	public void InitializeGamekeeper(bool isWhiteAI, bool isBlackAI)
+	public void InitializeGamekeeper()
 	{
 		GameObject.Find(Constants.TextGameObjectNames.OpeningCrawl).AddComponent<OpeningCrawl>();
 
@@ -67,19 +49,6 @@ public class GameKeeper : MonoBehaviour {
 		this.gameOver = false;
 		this.gameStarted = false;
 		this.piecesSpawned = 0;
-
-		this.isAIControllingSide = new Dictionary<Side, bool>();
-		this.isAIControllingSide[Side.White] = isWhiteAI;
-		this.isAIControllingSide[Side.Black] = isBlackAI;
-		this.AIBySide = new Dictionary<Side, AI>();
-		if (isWhiteAI)
-		{
-			this.AIBySide[Side.White] = new AI();
-		}
-		if (isBlackAI)
-		{
-			this.AIBySide[Side.Black] = new AI();
-		}
 
 		Animations.PlayOpeningCrawl();
 		this.SetEventHandlers();
@@ -112,11 +81,6 @@ public class GameKeeper : MonoBehaviour {
 	public bool isGameOver()
 	{
 		return this.gameOver;
-	}
-
-	public bool isSideControlledByAI(Side side)
-	{
-		return this.isAIControllingSide[side];
 	}
 
 	public float GetSquareSpacing()
@@ -324,10 +288,10 @@ public class GameKeeper : MonoBehaviour {
 		for (column = Position.min; column <= Position.max; column++)
 		{
 			// Black Pawns
-			arrangement[new Position(column, 7)] = Constants.PieceCodes.BlackPawn;
+			//arrangement[new Position(column, 7)] = Constants.PieceCodes.BlackPawn;
 
 			// White Pawns
-			arrangement[new Position(column, 2)] = Constants.PieceCodes.WhitePawn;
+			//arrangement[new Position(column, 7)] = Constants.PieceCodes.WhitePawn;
 		}
 
 		// Black Rooks
@@ -455,14 +419,6 @@ public class GameKeeper : MonoBehaviour {
 				else
 				{
 					Instantiate(this.whiteTurnIcon);
-				}
-
-				if (this.isSideControlledByAI(this.chessBoard.CurrentMovingSide()))
-				{
-					// Make the AI compute its next move on a separate thread, and handle movement and animation to the new position
-					this.AIBySide[this.chessBoard.CurrentMovingSide()].chessboardStateBeforeAIMove = Chessboard.MakeCopyOfChessboard(this.chessBoard);
-					this.AIBySide[this.chessBoard.CurrentMovingSide()].doComputation = true;
-					Debug.Log("Computation Start Time: " + Time.time);
 				}
 			}
 			else

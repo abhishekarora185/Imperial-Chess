@@ -171,13 +171,13 @@ public class MoveActions
 	{
 		if (move.getPiece().side == Side.Black && move.getPosition().GetRow() == Position.min)
 		{
+			move.getPiece().SetCurrentPosition(oldPosition);
 			// Pawn promotion
 			GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().SpawnPromotedPiece(Constants.PieceCodes.BlackQueen, move.getPiece().GetCurrentPosition());
 			GameObject.Destroy(GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().GetGameObjectFromPiece(move.getPiece()));
 		}
 		else if (move.getPiece().side == Side.White && move.getPosition().GetRow() == Position.max)
 		{
-			// Hack right now to pass the old position to the action camera
 			move.getPiece().SetCurrentPosition(oldPosition);
 
 			// Pawn promotion

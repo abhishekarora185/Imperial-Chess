@@ -23,8 +23,7 @@ public class PieceBehaviour : MonoBehaviour {
 
 	void OnMouseDown()
 	{
-		if (!GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().isSideControlledByAI(this.getPiece().side) &&
-			GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().hasGameStarted()
+		if (GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().hasGameStarted()
 			&& GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().chessBoard.CurrentMovingSide() == this.getPiece().side)
 		{
 			Bitboard moveBitboard = this.getPiece().GetSafeMovesForCurrentPosition();

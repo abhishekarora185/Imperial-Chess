@@ -19,11 +19,8 @@ public class MoveIcon : MonoBehaviour {
 
 	void OnMouseDown()
 	{
-		if (!GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().isSideControlledByAI(this.movingPiece.side))
-		{
-			MoveActions.standardMoveActions(new Move(this.movingPiece, this.movePosition));
-			GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().ClearTiles();
-		}
+		MoveActions.standardMoveActions(new Move(this.movingPiece, this.movePosition));
+		GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().ClearTiles();
 	}
 
 	public AbstractPiece GetMovingPiece()
