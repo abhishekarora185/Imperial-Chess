@@ -103,11 +103,14 @@ public class Constants
 		public static string ImperialMarch = "Imperial_March";
 
 		public static string Explosion = "Explosion";
+
+		public static string ForceTheme = "Force_Theme";
 	}
 
 	public static string MainCameraObject = "Main Camera";
 	public static string ActionCameraObject = "Action Camera";
 	public static string AuxiliaryAudioObject = "Auxiliary Audio";
+    public static string QuitAudioObject = "Quit Audio";
 	public static string PieceTag = "Piece";
 	public static string TileTag = "Tile";
 	public static string PieceHolderTag = "PieceHolder";
@@ -117,6 +120,7 @@ public class Constants
 	public static string SureText = "Sure";
 	public static string YesText = "Yes";
 	public static string NoText = "No";
+	public static string CreditsText = "Credits";
 }
 
 public enum Side

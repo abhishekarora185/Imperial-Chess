@@ -19,6 +19,8 @@ public class GameKeeper : MonoBehaviour {
 
 	public Chessboard chessBoard;
 
+	public bool moveSelected;
+
 	private bool gameOver;
 
 	private bool gameStarted;
@@ -49,6 +51,7 @@ public class GameKeeper : MonoBehaviour {
 		this.chessBoard = new Chessboard();
 		this.gameOver = false;
 		this.gameStarted = false;
+		this.moveSelected = false;
 		this.piecesSpawned = 0;
 
 		Animations.PlayOpeningCrawl();
@@ -421,11 +424,13 @@ public class GameKeeper : MonoBehaviour {
 				{
 					Instantiate(this.whiteTurnIcon);
 				}
+				this.moveSelected = false;
 			}
 			else
 			{
 				// Game Over!
 				this.gameOver = true;
+				this.moveSelected = true;
 				EventManager.StopListening(Constants.EventNames.NewPlayerTurn);
 
 				if (this.chessBoard.CurrentMovingSide() == Side.Black)

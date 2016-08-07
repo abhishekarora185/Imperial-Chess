@@ -19,6 +19,7 @@ public class MoveIcon : MonoBehaviour {
 
 	void OnMouseDown()
 	{
+		GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().moveSelected = true;
 		MoveActions.standardMoveActions(new Move(this.movingPiece, this.movePosition));
 		GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().ClearTiles();
 	}

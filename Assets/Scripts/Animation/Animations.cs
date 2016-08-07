@@ -19,6 +19,7 @@ public class Animations {
 		GameObject.Find(Constants.SureText).GetComponent<Text>().enabled = false;
 		GameObject.Find(Constants.YesText).GetComponent<Text>().enabled = false;
 		GameObject.Find(Constants.NoText).GetComponent<Text>().enabled = false;
+		GameObject.Find(Constants.CreditsText).GetComponent<Text>().enabled = false;
 	}
 
 	public static IEnumerator ALongTimeAgo()
@@ -363,19 +364,34 @@ public class Animations {
 
 	public static void DisplayQuitMessage()
 	{
-		Time.timeScale = 0.0f;
 		GameObject.Find(Constants.SureText).GetComponent<Text>().enabled = true;
 		GameObject.Find(Constants.YesText).GetComponent<Text>().enabled = true;
 		GameObject.Find(Constants.NoText).GetComponent<Text>().enabled = true;
 
 		GameObject.Find(Constants.YesText).GetComponent<Button>().onClick.AddListener(() => {
-			Application.Quit();
+			GameObject.Find(Constants.SureText).GetComponent<Text>().enabled = false;
+			GameObject.Find(Constants.YesText).GetComponent<Text>().enabled = false;
+			GameObject.Find(Constants.NoText).GetComponent<Text>().enabled = false;
+			GameObject.Find(Constants.QuitText).GetComponent<Text>().enabled = false;
+			GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().StartCoroutine(ShowCredits());
 		});
 		GameObject.Find(Constants.NoText).GetComponent<Button>().onClick.AddListener(() => {
 			GameObject.Find(Constants.SureText).GetComponent<Text>().enabled = false;
 			GameObject.Find(Constants.YesText).GetComponent<Text>().enabled = false;
 			GameObject.Find(Constants.NoText).GetComponent<Text>().enabled = false;
-			Time.timeScale = 1.0f;
 		});
+	}
+
+	private static IEnumerator ShowCredits()
+	{
+		GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<AudioSource>().Stop();
+		GameObject.Find(Constants.AuxiliaryAudioObject).GetComponent<AudioSource>().Stop();
+		AudioSource creditsAudioSource = GameObject.Find(Constants.QuitAudioObject).GetComponent<AudioSource>();
+		GameObject.Find(Constants.CreditsText).GetComponent<Text>().enabled = true;
+		GameObject.Find(Constants.CreditsText).GetComponent<Text>().canvasRenderer.SetAlpha(0.01f);
+		GameObject.Find(Constants.CreditsText).GetComponent<Text>().CrossFadeAlpha(1.0f, creditsAudioSource.clip.length / 2, false);
+		creditsAudioSource.Play();
+		yield return new WaitForSeconds(creditsAudioSource.clip.length);
+		Application.Quit();
 	}
 }
