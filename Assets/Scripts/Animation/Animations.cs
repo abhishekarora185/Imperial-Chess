@@ -373,7 +373,12 @@ public class Animations {
 			GameObject.Find(Constants.YesText).GetComponent<Text>().enabled = false;
 			GameObject.Find(Constants.NoText).GetComponent<Text>().enabled = false;
 			GameObject.Find(Constants.QuitText).GetComponent<Text>().enabled = false;
-			GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().StartCoroutine(ShowCredits());
+
+			// Leave this commented if needless dramatization is a nobler cause than respecting the player's time
+			Application.Quit();
+
+			// Leave this commented if the player's time is to be valued
+			//GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().StartCoroutine(ShowCredits());
 		});
 		GameObject.Find(Constants.NoText).GetComponent<Button>().onClick.AddListener(() => {
 			GameObject.Find(Constants.SureText).GetComponent<Text>().enabled = false;
@@ -384,6 +389,8 @@ public class Animations {
 
 	private static IEnumerator ShowCredits()
 	{
+		// Makes the game creator's name fade in slowly to the epic Force Theme
+
 		GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<AudioSource>().Stop();
 		GameObject.Find(Constants.AuxiliaryAudioObject).GetComponent<AudioSource>().Stop();
 		AudioSource creditsAudioSource = GameObject.Find(Constants.QuitAudioObject).GetComponent<AudioSource>();
