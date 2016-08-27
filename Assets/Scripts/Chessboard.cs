@@ -1,14 +1,24 @@
-﻿using UnityEngine;
+﻿/*
+ * Author: Abhishek Arora
+ * The Chess Engine class that represents a Chessboard
+ * A "Chessboard" defined as such is simply a board state, and is not strictly the board seen by the user in the game
+ * Several different board states can be used to check if moves are safe, and hence, there is functionality to copy a chessboard
+ * */
+
+using UnityEngine;
 using System.Collections.Generic;
 
 public class Chessboard {
 
+	// Bitboards marking the positions of pieces of each side; this helps with the dynamic move processing for pieces
 	private Bitboard blackPieceLocations;
 
 	private Bitboard whitePieceLocations;
 
+	// The side whose turn it currently is
 	private Side movingSide;
 
+	// The pieces that are still alive on this board
 	private List<AbstractPiece> activePieces;
 
 	public Chessboard() {
@@ -49,7 +59,7 @@ public class Chessboard {
 		return this.activePieces;
 	}
 
-	// Called by pieces whenever they need to move
+	// Called by pieces associated with this board whenever they need to move
 	public void MoveTo(AbstractPiece piece, Position position)
 	{
 		// First, modify the relevant bitboard(s)
@@ -97,6 +107,7 @@ public class Chessboard {
 		}
 	}
 
+	// Adds a new piece to the board
 	public void AddPiece(AbstractPiece newPiece)
 	{
 		AbstractPiece existingPiece = null;
@@ -111,6 +122,7 @@ public class Chessboard {
 			}
 		}
 
+		// Only happens during pawn promotion
 		if (existingPiece != null)
 		{
 			this.activePieces.Remove(existingPiece);
@@ -192,7 +204,7 @@ public class Chessboard {
 				if (availableMoves.ValueAtPosition(kingToCheck.GetCurrentPosition()) > 0)
 				{
 					// Special check for Pawns advancing forward - they are of no harm and must not be considered here
-					if (activePiece.GetType().Name == Constants.PieceClassNames.Pawn && activePiece.GetCurrentPosition().GetColumn() == kingToCheck.GetCurrentPosition().GetColumn())
+					if (typeof(Pawn).IsInstanceOfType(activePiece) && activePiece.GetCurrentPosition().GetColumn() == kingToCheck.GetCurrentPosition().GetColumn())
 					{
 						// Laugh it off
 					}
@@ -229,6 +241,7 @@ public class Chessboard {
 		return inCheckmate;
 	}
 
+	// Copies are made for computational decisions like check/checkmate
 	public static Chessboard MakeCopyOfChessboard(Chessboard chessboardToCopy)
 	{
 		Chessboard newChessboard = new Chessboard();

@@ -1,4 +1,9 @@
-﻿using System;
+﻿/*
+ * Author: Abhishek Arora
+ * The helper file which defines Movement-related classes for use throughout the game and handles movement (and only triggers animations) of piece GameObjects
+ * */
+
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -153,7 +158,7 @@ public class MoveActions
 
 		Pawn dyingPawn = null;
 
-		if (pieceAtEnPassantPosition != null && pieceAtEnPassantPosition.GetType().Name == Constants.PieceClassNames.Pawn && pieceAtEnPassantPosition.side != move.getPiece().side && ((Pawn)pieceAtEnPassantPosition).allowEnPassantCapture)
+		if (pieceAtEnPassantPosition != null && typeof(Pawn).IsInstanceOfType(pieceAtEnPassantPosition) && pieceAtEnPassantPosition.side != move.getPiece().side && ((Pawn)pieceAtEnPassantPosition).allowEnPassantCapture)
 		{
 			dyingPawn = (Pawn)pieceAtEnPassantPosition;
 		}
@@ -194,7 +199,7 @@ public class MoveActions
 
 				foreach (GameObject piece in GameObject.FindGameObjectsWithTag(Constants.PieceTag))
 				{
-					if (piece.GetComponent<PieceBehaviour>().getPiece().side == move.getPiece().side && piece.GetComponent<PieceBehaviour>().getPiece().GetType().Name == Constants.PieceClassNames.Rook && piece.GetComponent<PieceBehaviour>().getPiece().GetCurrentPosition().GetColumn() < move.getPosition().GetColumn())
+					if (piece.GetComponent<PieceBehaviour>().getPiece().side == move.getPiece().side && typeof(Rook).IsInstanceOfType(piece.GetComponent<PieceBehaviour>().getPiece()) && piece.GetComponent<PieceBehaviour>().getPiece().GetCurrentPosition().GetColumn() < move.getPosition().GetColumn())
 					{
 						rookGameObject = piece;
 						break;
@@ -212,7 +217,7 @@ public class MoveActions
 
 				foreach (GameObject piece in GameObject.FindGameObjectsWithTag(Constants.PieceTag))
 				{
-					if (piece.GetComponent<PieceBehaviour>().getPiece().side == move.getPiece().side && piece.GetComponent<PieceBehaviour>().getPiece().GetType().Name == Constants.PieceClassNames.Rook && piece.GetComponent<PieceBehaviour>().getPiece().GetCurrentPosition().GetColumn() > move.getPosition().GetColumn())
+					if (piece.GetComponent<PieceBehaviour>().getPiece().side == move.getPiece().side && typeof(Rook).IsInstanceOfType(piece.GetComponent<PieceBehaviour>().getPiece()) && piece.GetComponent<PieceBehaviour>().getPiece().GetCurrentPosition().GetColumn() > move.getPosition().GetColumn())
 					{
 						rookGameObject = piece;
 						break;

@@ -1,4 +1,9 @@
-﻿using UnityEngine;
+﻿/*
+ * Author: Abhishek Arora
+ * The Behaviour script that controls the auxiliary camera and audio used to dramatize piece captures/deaths
+ * */
+
+using UnityEngine;
 using System.Collections;
 
 public class ActionCamera : MonoBehaviour {
@@ -19,6 +24,7 @@ public class ActionCamera : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		// If there are no more deaths to celebrate with music, let the game loop music continue
 		if (this.deathAudioClipPlayQueue.Count == 0 && !this.gameLoopAudioSource.isPlaying)
 		{
 			this.gameLoopAudioSource.UnPause();
@@ -32,6 +38,7 @@ public class ActionCamera : MonoBehaviour {
 
 	public void EnableMainCamera()
 	{
+		// Switch back to the main camera
 		GameObject.Find(Constants.MainCameraObject).GetComponent<Camera>().enabled = true;
 		this.gameObject.GetComponent<Camera>().enabled = false;
 	}
@@ -48,7 +55,7 @@ public class ActionCamera : MonoBehaviour {
 		}
 		if (movingPiece.side == Side.Black)
 		{
-			// Badass music
+			// Evil music
 			this.deathAudioSource.clip = (AudioClip)Resources.Load(Constants.AudioClipNames.AudioDirectory + Constants.AudioClipNames.ImperialMarch, typeof(AudioClip));
 		}
 

@@ -1,4 +1,9 @@
-﻿using System.Collections.Generic;
+﻿/*
+ * Author: Abhishek Arora
+ * The Chess Engine class that controls Bishops
+ * */
+
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Bishop : AbstractPiece
@@ -21,20 +26,14 @@ public class Bishop : AbstractPiece
 		this.InitializationActions();
 	}
 
-	// Update is called once per frame
-	void Update()
-	{
-
-	}
-
 	public override void PostMoveActions()
 	{
-
+		// No post-move actions for Bishops
 	}
 
 	public override void PerTurnProcessing()
 	{
-
+		// No per-turn processing for Bishops
 	}
 
 	protected override void ComputeMoves()
@@ -92,6 +91,7 @@ public class Bishop : AbstractPiece
 		}
 	}
 
+	// For Bishops, only update static calculations with the positions of other pieces
 	protected override Bitboard AdditionalMoveProcessing(Bitboard movesForCurrentPosition)
 	{
 		if (this.side == Side.Black)

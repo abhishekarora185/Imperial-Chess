@@ -1,4 +1,9 @@
-﻿using UnityEngine;
+﻿/*
+ * Author: Abhishek Arora
+ * The Behaviour script that controls the faction logo that shows up before each turn to indicate the start of a turn
+ * */
+
+using UnityEngine;
 using System.Collections;
 
 public class TurnIcon : MonoBehaviour {
@@ -12,7 +17,7 @@ public class TurnIcon : MonoBehaviour {
 		this.aliveTime = 2.0f;
 		if (!GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().isGameOver())
 		{
-			// Allow the turn icon to persist
+			// Allow the turn icon to persist for a while only
 			StartCoroutine(this.KillTurnIcon());
 		}
 		this.initialAngle = this.gameObject.GetComponent<Transform>().eulerAngles;

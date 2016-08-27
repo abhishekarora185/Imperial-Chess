@@ -1,4 +1,9 @@
-﻿using UnityEngine;
+﻿/*
+ * Author: Abhishek Arora
+ * The Behaviour script that controls the Opening Crawl and triggers the rotation of the camera towards the board
+ * */
+
+using UnityEngine;
 using System.Collections;
 
 public class OpeningCrawl : MonoBehaviour {
@@ -26,7 +31,7 @@ public class OpeningCrawl : MonoBehaviour {
 	void Update () {
 		if (Input.GetKeyDown(KeyCode.Mouse0))
 		{
-			// Skip the opening crawl
+			// Skip the opening crawl if the user clicks anything
 			this.HideOpeningCrawlObjects();
 			this.skipOpeningCrawl = true;
 		}
@@ -61,6 +66,7 @@ public class OpeningCrawl : MonoBehaviour {
 
 	public void DestroyOpeningCrawlObjects()
 	{
+		// Clean up objects that won't be used later
 		if (GameObject.Find(Constants.TextGameObjectNames.ALongTimeAgo) != null)
 		{
 			GameObject.Find(Constants.TextGameObjectNames.ALongTimeAgo).SetActive(false);
@@ -77,6 +83,7 @@ public class OpeningCrawl : MonoBehaviour {
 		return this.targetRotationAngle;
 	}
 
+	// Hide opening crawl objects till they are cleaned up
 	private void HideOpeningCrawlObjects()
 	{
 		if (GameObject.Find(Constants.TextGameObjectNames.ALongTimeAgo) != null)

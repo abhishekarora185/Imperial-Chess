@@ -1,4 +1,9 @@
-﻿using System.Collections.Generic;
+﻿/*
+ * Author: Abhishek Arora
+ * The Chess Engine class that controls Queens
+ * */
+
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Queen : AbstractPiece
@@ -20,20 +25,14 @@ public class Queen : AbstractPiece
 		this.InitializationActions();
 	}
 
-	// Update is called once per frame
-	void Update()
-	{
-		
-	}
-
 	public override void PostMoveActions()
 	{
-
+		// No post-move actions for Queens
 	}
 
 	public override void PerTurnProcessing()
 	{
-
+		// No per-turn processing for Queens
 	}
 
 	protected override void ComputeMoves()
@@ -103,6 +102,7 @@ public class Queen : AbstractPiece
 		}
 	}
 
+	// Only update static calculations with the current board state
 	protected override Bitboard AdditionalMoveProcessing(Bitboard movesForCurrentPosition)
 	{
 		if (this.side == Side.Black)

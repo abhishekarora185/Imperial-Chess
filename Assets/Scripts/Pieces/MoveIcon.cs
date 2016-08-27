@@ -1,24 +1,22 @@
-﻿using UnityEngine;
+﻿/*
+ * Author: Abhishek Arora
+ * The Behaviour script associated with the visible icons on the board that the player can click on to execute a valid move
+ * */
+
+using UnityEngine;
 using System.Collections.Generic;
 
 public class MoveIcon : MonoBehaviour {
 
+	// The piece that is making the move
 	private AbstractPiece movingPiece;
 
+	// The position to which the movingPiece will move if this script's game object is clicked
 	private Position movePosition;
-
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
 
 	void OnMouseDown()
 	{
+		// Execute the move associated with this behaviour script
 		GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().moveSelected = true;
 		MoveActions.standardMoveActions(new Move(this.movingPiece, this.movePosition));
 		GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().ClearTiles();

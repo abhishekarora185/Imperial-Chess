@@ -1,8 +1,15 @@
-﻿using System.Collections.Generic;
+﻿/*
+ * Author: Abhishek Arora
+ * The Chess Engine class that defines the Bitboard, a representation of a chess board state that allows for fast computations
+ * Bitwise operations are carried out by this class, while high-level operations are exposed as methods for other chess engine classes to easily use
+ * */
+
+using System.Collections.Generic;
 using UnityEngine;
 public class Bitboard {
 
 	// Each byte is a row, starting from the -ve X-axis (white side)
+	// There will, obviously, always be 8 bytes stored, given the dimensions of a standard chessBoard
 	private byte[] bitboard;
 
 	public Bitboard()
@@ -52,6 +59,7 @@ public class Bitboard {
 
 	public Bitboard ComplementBitboard(Bitboard bitboardToComplement)
 	{
+		// Flips all the bits of the passed bitboard and returns the result
 		Bitboard newBitboard = new Bitboard();
 		int row;
 
@@ -132,6 +140,7 @@ public class Bitboard {
 
 	public void PrintBitboard()
 	{
+		// For debugging purposes only
 		int row;
 		for (row = 0; row < this.bitboard.Length; row++)
 		{

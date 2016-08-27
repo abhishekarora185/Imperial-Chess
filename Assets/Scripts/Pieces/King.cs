@@ -1,9 +1,14 @@
-﻿using System.Collections.Generic;
+﻿/*
+ * Author: Abhishek Arora
+ * The Chess Engine class that controls Kings
+ * */
+
+using System.Collections.Generic;
 using UnityEngine;
 
 public class King : AbstractPiece
 {
-
+	// If the King is currently allowed to castle or not
 	public bool canCastle;
 
 	public King()
@@ -23,18 +28,13 @@ public class King : AbstractPiece
 		this.InitializationActions();
 	}
 
-	// Update is called once per frame
-	void Update()
-	{
-
-	}
-
+	// If the move was a castle, move the corresponding Rook as well, and disable further castling
 	public override void PostMoveActions()
 	{
 		if (this.canCastle)
 		{
 			// Move the Rook
-			// If this move was deemed valid in the first place, the Rook should be there in said position
+			// If this move was deemed valid in the first place, the Rook should present in the specified (below) position
 			if (this.GetCurrentPosition().GetColumn() == 2)
 			{
 				// King side castling
@@ -47,14 +47,14 @@ public class King : AbstractPiece
 				Rook queenSideRook = (Rook)this.chessBoard.GetPieceAtPosition(new Position(8, this.GetCurrentPosition().GetRow()));
 				this.chessBoard.MoveTo(queenSideRook, new Position(5, queenSideRook.GetCurrentPosition().GetRow()));
 			}
-
+			// If the King has moved, it can no longer castle
 			this.canCastle = false;
 		}
 	}
 
 	public override void PerTurnProcessing()
 	{
-
+		// No per-turn processing for Kings
 	}
 
 	protected override void ComputeMoves()
@@ -95,7 +95,7 @@ public class King : AbstractPiece
 
 	protected override Bitboard AdditionalMoveProcessing(Bitboard movesForCurrentPosition)
 	{
-
+		// Update static calculations based on the positions of pieces
 		if (this.side == Side.Black)
 		{
 			movesForCurrentPosition = movesForCurrentPosition.ComputeRayIntersections(this.chessBoard.GetPieceLocations(Side.White), this.GetCurrentPosition(), true);
@@ -115,7 +115,7 @@ public class King : AbstractPiece
 		{
 			// King side castling
 			if (this.chessBoard.GetPieceAtPosition(new Position(1, this.GetCurrentPosition().GetRow())) != null &&
-				this.chessBoard.GetPieceAtPosition(new Position(1, this.GetCurrentPosition().GetRow())).GetType().Name == Constants.PieceClassNames.Rook)
+				typeof(Rook).IsInstanceOfType(this.chessBoard.GetPieceAtPosition(new Position(1, this.GetCurrentPosition().GetRow()))))
 			{
 				Rook kingSideRook = (Rook)this.chessBoard.GetPieceAtPosition(new Position(1, this.GetCurrentPosition().GetRow()));
 				// If both move positions are unoccupied
@@ -134,7 +134,7 @@ public class King : AbstractPiece
 
 			// Queen side castling
 			if (this.chessBoard.GetPieceAtPosition(new Position(8, this.GetCurrentPosition().GetRow())) != null &&
-				this.chessBoard.GetPieceAtPosition(new Position(8, this.GetCurrentPosition().GetRow())).GetType().Name == Constants.PieceClassNames.Rook)
+				typeof(Rook).IsInstanceOfType(this.chessBoard.GetPieceAtPosition(new Position(8, this.GetCurrentPosition().GetRow()))))
 			{
 				Rook queenSideRook = (Rook)this.chessBoard.GetPieceAtPosition(new Position(8, this.GetCurrentPosition().GetRow()));
 				if (queenSideRook.canCastle &&

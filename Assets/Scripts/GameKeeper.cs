@@ -1,47 +1,58 @@
-﻿using UnityEngine;
+﻿/*
+ * Author: Abhishek Arora
+ * The Behaviour script that controls the game flow, right from the opening crawl to the end of the game
+ * */
+
+using UnityEngine;
 using System.Threading;
 using System.Collections.Generic;
 using UnityEngine.UI;
 
 public class GameKeeper : MonoBehaviour {
 
+	// Debug mode does away with needless animations to get things done fast
 	public static bool isDebug = false;
 
+	// The piece game object blueprints, stored through the Unity editor
 	public GameObject[] prefabs;
 
+	// The move icon blueprints
 	public GameObject whiteMoveIcon;
 
 	public GameObject blackMoveIcon;
 
+	// The turn icon blueprints
 	public GameObject whiteTurnIcon;
 
 	public GameObject blackTurnIcon;
 
+	// The Master board state, the one the user sees
 	public Chessboard chessBoard;
 
+	// Has a move already been chosen this turn? (doesn't let user input after a move has been chosen)
 	public bool moveSelected;
 
+	// Has a King been checkmated?
 	private bool gameOver;
 
+	// Is user input allowed/is the opening animation done?
 	private bool gameStarted;
 
+	// The width of a square of the Master chessboard object in world space
 	private float squareSpacing;
 
+	// The pieces that need to be spawned
 	private int piecesToSpawn;
 
+	// The pieces that have been spawned
 	private int piecesSpawned;
 
-	// Position to coordinate mapping
+	// Master chessboard Position to world space coordinate mapping
 	private Dictionary<Position, Vector3> squares;
 
 	// Use this for initialization
 	void Start () {
 		this.InitializeGamekeeper();
-	}
-	
-	// Update is called once per frame
-	void Update () {
-
 	}
 
 	public void InitializeGamekeeper()
@@ -60,6 +71,7 @@ public class GameKeeper : MonoBehaviour {
 		this.ComputeSquares();
 	}
 
+	// Enables or disables user input
 	public void TogglePauseGame()
 	{
 		if (this.gameStarted)
@@ -181,6 +193,7 @@ public class GameKeeper : MonoBehaviour {
 		this.PostPromotionSpawnSettings(spawnedPiece);
 	}
 
+	// Returns the GameObject associated with a given Piece (the Piece must belong to the master Chessboard that is a member of this class)
 	public GameObject GetGameObjectFromPiece(AbstractPiece piece)
 	{
 		GameObject gameObjectOfPiece = null;
@@ -196,6 +209,7 @@ public class GameKeeper : MonoBehaviour {
 		return gameObjectOfPiece;
 	}
 
+	// Destroys a piece game object in the most rudimentary way possible
 	public void DestroyPiece(PieceBehaviour piece)
 	{
 		if (Animations.isSpaceship(piece.getPiece()))
@@ -236,6 +250,7 @@ public class GameKeeper : MonoBehaviour {
 		}
 	}
 
+	// A standard chess board arrangement; used for the game proper
 	private Dictionary<Position, int> GetDefaultSpawnArrangement()
 	{
 		Dictionary<Position, int> arrangement = new Dictionary<Position, int>();
@@ -283,6 +298,7 @@ public class GameKeeper : MonoBehaviour {
 		return arrangement;
 	}
 
+	// A custom arrangement for Debug mode
 	private Dictionary<Position, int> GetDebugSpawnArrangement()
 	{
 		// Just so you can start with the board in a given state instead of having to play your way to that state
@@ -340,7 +356,7 @@ public class GameKeeper : MonoBehaviour {
 			{
 				foreach (GameObject piece in GameObject.FindGameObjectsWithTag(Constants.PieceTag))
 				{
-					if (piece.GetComponent<PieceBehaviour>().getPiece().GetType().Name == Constants.PieceClassNames.Bishop)
+					if (typeof(Bishop).IsInstanceOfType(piece.GetComponent<PieceBehaviour>().getPiece()))
 					{
 						piece.GetComponent<PieceBehaviour>().isInAnimationState = true;
 					}
@@ -356,7 +372,7 @@ public class GameKeeper : MonoBehaviour {
 			{
 				foreach (GameObject piece in GameObject.FindGameObjectsWithTag(Constants.PieceTag))
 				{
-					if (piece.GetComponent<PieceBehaviour>().getPiece().GetType().Name == Constants.PieceClassNames.Knight)
+					if (typeof(Knight).IsInstanceOfType(piece.GetComponent<PieceBehaviour>().getPiece()))
 					{
 						piece.GetComponent<PieceBehaviour>().isInAnimationState = true;
 					}
@@ -372,7 +388,7 @@ public class GameKeeper : MonoBehaviour {
 			{
 				foreach (GameObject piece in GameObject.FindGameObjectsWithTag(Constants.PieceTag))
 				{
-					if (piece.GetComponent<PieceBehaviour>().getPiece().GetType().Name == Constants.PieceClassNames.Rook)
+					if (typeof(Rook).IsInstanceOfType(piece.GetComponent<PieceBehaviour>().getPiece()))
 					{
 						piece.GetComponent<PieceBehaviour>().isInAnimationState = true;
 					}
@@ -388,8 +404,8 @@ public class GameKeeper : MonoBehaviour {
 			{
 				foreach (GameObject piece in GameObject.FindGameObjectsWithTag(Constants.PieceTag))
 				{
-					if (piece.GetComponent<PieceBehaviour>().getPiece().GetType().Name == Constants.PieceClassNames.Queen ||
-						piece.GetComponent<PieceBehaviour>().getPiece().GetType().Name == Constants.PieceClassNames.King)
+					if (typeof(Queen).IsInstanceOfType(piece.GetComponent<PieceBehaviour>().getPiece()) ||
+						typeof(King).IsInstanceOfType(piece.GetComponent<PieceBehaviour>().getPiece()))
 					{
 						piece.GetComponent<PieceBehaviour>().isInAnimationState = true;
 					}
@@ -456,6 +472,7 @@ public class GameKeeper : MonoBehaviour {
 
 	}
 
+	// Done so that pieces can be called with their actual names and without the Unity " (Clone)" suffix
 	private void TrimName(PieceBehaviour piece)
 	{
 		if (piece.gameObject.name.IndexOf(Constants.PieceNames.Clone) > -1)
@@ -464,6 +481,7 @@ public class GameKeeper : MonoBehaviour {
 		}
 	}
 
+	// After pieces are spawned
 	private void PostSpawnSettings()
 	{
 		foreach (GameObject spawnedObject in GameObject.FindGameObjectsWithTag(Constants.PieceTag))
@@ -476,12 +494,12 @@ public class GameKeeper : MonoBehaviour {
 				spawnedObject.transform.position = Animations.InitializeStartAnimationSettings(spawnedObject.GetComponent<PieceBehaviour>());
 			}
 
-			if (spawnedObject.GetComponent<PieceBehaviour>().getPiece().GetType().Name == Constants.PieceClassNames.Queen || spawnedObject.GetComponent<PieceBehaviour>().getPiece().GetType().Name == Constants.PieceClassNames.King)
+			if (typeof(Queen).IsInstanceOfType(spawnedObject.GetComponent<PieceBehaviour>().getPiece()) || typeof(King).IsInstanceOfType(spawnedObject.GetComponent<PieceBehaviour>().getPiece()))
 			{
 				Animations.CorrectVerticalOffsets(spawnedObject.GetComponent<PieceBehaviour>());
 			}
 
-			if (isDebug || (spawnedObject.GetComponent<PieceBehaviour>().getPiece().GetType().Name == Constants.PieceClassNames.Pawn && !this.hasGameStarted()))
+			if (isDebug || (typeof(Pawn).IsInstanceOfType(spawnedObject.GetComponent<PieceBehaviour>().getPiece()) && !this.hasGameStarted()))
 			{
 				// Pawns should start moving immediately
 				spawnedObject.GetComponent<PieceBehaviour>().isInAnimationState = true;
@@ -497,6 +515,7 @@ public class GameKeeper : MonoBehaviour {
 		}
 	}
 
+	// After a pawn is promoted
 	private void PostPromotionSpawnSettings(GameObject spawnedObject)
 	{
 		// Assuming the object is a Queen

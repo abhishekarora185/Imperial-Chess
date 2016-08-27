@@ -1,4 +1,9 @@
-﻿using System;
+﻿/*
+ * Author: Abhishek Arora
+ * The helper class that hosts all Constants used throughout the project
+ * */
+
+using System;
 using System.Collections.Generic;
 
 public class Constants
@@ -20,6 +25,7 @@ public class Constants
 		public static int BlackKing = 10;
 		public static int WhiteKing = 11;
 
+		// Used to determine which Chess engine Piece class to associate with a given Game object's PieceBehaviour script
 		public static Dictionary<int, Type> pieceCodeToPieceTypeMapping = new Dictionary<int, Type> {
 			{BlackPawn, typeof(Pawn)},
 			{WhitePawn, typeof(Pawn)},
@@ -36,6 +42,7 @@ public class Constants
 		};
 	}
 
+	// Names of the piece GameObjects
 	public class PieceNames
 	{
 		public static string BlackPawn = "BlackPawn";
@@ -54,16 +61,7 @@ public class Constants
 		public static string Clone = "(Clone)";
 	}
 
-	public class PieceClassNames
-	{
-		public static string Pawn = "Pawn";
-		public static string Rook = "Rook";
-		public static string Bishop = "Bishop";
-		public static string Knight = "Knight";
-		public static string Queen = "Queen";
-		public static string King = "King";
-	}
-
+	// Names of events triggered through the game
 	public class EventNames
 	{
 		public static string PawnsLanded = "pawnslanded";
@@ -79,6 +77,7 @@ public class Constants
 		public static string NewPlayerTurn = "newplayerturn";
 	}
 
+	// Names of non-UI game objects that render text
 	public class TextGameObjectNames
 	{
 		public static string ALongTimeAgo = "A long time ago...";
@@ -88,6 +87,7 @@ public class Constants
 		public static string OpeningCrawl = "Opening Crawl";
 	}
 
+	// Names/Paths of the WAV files used as audio clips
 	public class AudioClipNames
 	{
 		public static string AudioDirectory = "Audio/";
@@ -107,10 +107,11 @@ public class Constants
 		public static string ForceTheme = "Force_Theme";
 	}
 
+	// Miscellaneous constants
 	public static string MainCameraObject = "Main Camera";
 	public static string ActionCameraObject = "Action Camera";
 	public static string AuxiliaryAudioObject = "Auxiliary Audio";
-    public static string QuitAudioObject = "Quit Audio";
+	public static string QuitAudioObject = "Quit Audio";
 	public static string PieceTag = "Piece";
 	public static string TileTag = "Tile";
 	public static string PieceHolderTag = "PieceHolder";
@@ -123,6 +124,7 @@ public class Constants
 	public static string CreditsText = "Credits";
 }
 
+// Each piece is associated with a Side
 public enum Side
 {
 	Black,

@@ -1,17 +1,19 @@
-﻿using UnityEngine;
+﻿/*
+ * Author: Abhishek Arora
+ * The Behaviour script attached to Piece game objects which handles their Unity events and hosts a Chess Engine piece for engine computations
+ * */
+
+using UnityEngine;
 using System.Collections.Generic;
 using System;
 
 public class PieceBehaviour : MonoBehaviour {
 
+	// If the piece is currently in motion/fade action
 	public bool isInAnimationState;
 
+	// The link between the game object and the chess engine
 	private AbstractPiece piece;
-
-	// Use this for initialization
-	void Start () {
-
-	}
 	
 	// Update is called once per frame
 	void Update () {
@@ -23,6 +25,7 @@ public class PieceBehaviour : MonoBehaviour {
 
 	void OnMouseDown()
 	{
+		// Display all valid moves of this piece from its current position as move icons
 		if (GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().hasGameStarted()
 			&& !GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().moveSelected
 			&& GameObject.Find(Constants.PieceNames.ChessBoard).GetComponent<GameKeeper>().chessBoard.CurrentMovingSide() == this.getPiece().side)

@@ -1,8 +1,14 @@
-﻿using System.Collections.Generic;
+﻿/*
+ * Author: Abhishek Arora
+ * The Chess Engine class that controls Pawns
+ * */
+
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Pawn : AbstractPiece {
 
+	// If the pawn can be captured via En Passant or not
 	public bool allowEnPassantCapture;
 
 	private Position initialPosition;
@@ -22,12 +28,6 @@ public class Pawn : AbstractPiece {
 	void Start()
 	{
 		this.InitializationActions();
-	}
-
-	// Update is called once per frame
-	void Update()
-	{
-
 	}
 
 	public void initializePawn(Position position)
@@ -80,7 +80,6 @@ public class Pawn : AbstractPiece {
 
 	public override void PerTurnProcessing()
 	{
-
 		if (this.chessBoard.CurrentMovingSide() == this.side && this.allowEnPassantCapture)
 		{
 			// Disable en passant vulnerability if the pawn is still alive on the player's turn

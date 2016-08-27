@@ -1,4 +1,9 @@
-﻿using System.Collections.Generic;
+﻿/*
+ * Author: Abhishek Arora
+ * The Chess Engine class that controls Knights
+ * */
+
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Knight : AbstractPiece
@@ -20,19 +25,14 @@ public class Knight : AbstractPiece
 		this.InitializationActions();
 	}
 
-	// Update is called once per frame
-	void Update()
-	{
-		
-	}
-
 	public override void PostMoveActions()
 	{
+        // No post-move actions for Knights
 	}
 
 	public override void PerTurnProcessing()
 	{
-
+        // No per-turn processing for Knights
 	}
 
 	protected override void ComputeMoves()
@@ -73,6 +73,7 @@ public class Knight : AbstractPiece
 		}
 	}
 
+	// Nothing but updating static calculations with the positions of other pieces
 	protected override Bitboard AdditionalMoveProcessing(Bitboard movesForCurrentPosition)
 	{
 		if (this.side == Side.Black)

@@ -1,9 +1,14 @@
-﻿using System.Collections.Generic;
+﻿/*
+ * Author: Abhishek Arora
+ * The Chess Engine class that controls Rooks
+ * */
+
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Rook : AbstractPiece
 {
-
+	// If the Rook can take part in castling or not
 	public bool canCastle;
 
 	public Rook()
@@ -23,14 +28,9 @@ public class Rook : AbstractPiece
 		this.InitializationActions();
 	}
 
-	// Update is called once per frame
-	void Update()
-	{
-	
-	}
-
 	public override void PostMoveActions()
 	{
+		// If the rook has moved, it can no longer take part in castling
 		if (this.canCastle)
 		{
 			this.canCastle = false;
@@ -39,7 +39,7 @@ public class Rook : AbstractPiece
 
 	public override void PerTurnProcessing()
 	{
-		
+		// No per-turn processing for Rooks
 	}
 
 	protected override void ComputeMoves()
@@ -77,6 +77,7 @@ public class Rook : AbstractPiece
 		}
 	}
 
+	// Only update static calculations with the current board state
 	protected override Bitboard AdditionalMoveProcessing(Bitboard movesForCurrentPosition)
 	{
 		if (this.side == Side.Black)
